@@ -41,13 +41,12 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 //(Có dòng import android.Manifest mới xài được WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
                     , REQUEST_CODE);
-            Toast.makeText(this, "Quyền đã được cấp", Toast.LENGTH_LONG).show();
         }
         else {
             musicFiles = getSongs(this);
-            Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
             initViewPager();
         }
     }
