@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    // Cấp quyền getSongs để vào ViewPager, nếu allow thì sẽ được cấp nhạc từ file trong điện thoại, nếu từ chối thì không cấp nhạc từ đó
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void initViewPager() { //Function show fragments
+    private void initViewPager() { //Function show fragments - ViewPager + TabLayout cho 2 fragments: Song + Album
         ViewPager vPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         ViewPagerAdapter vPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
@@ -79,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(vPager);
     }
 
-    public static class ViewPagerAdapter extends FragmentPagerAdapter {
+    public static class ViewPagerAdapter extends FragmentPagerAdapter { //Quản lý fragments và titles
         private ArrayList<Fragment> fragments;
         private ArrayList<String> titles;
 
