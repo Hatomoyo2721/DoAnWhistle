@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaMetadata;
@@ -31,13 +32,15 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
 
     @NonNull
     @Override
+    // Tạo và trả về 1 đối tượng 'viewHolder' khi cần một viewholder mới
     public viewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(music_Context).inflate(R.layout.music_items, parent, false);
         return new viewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+    // Gắn data từ list 'musicFiles' vào các thành phần của mỗi 'viewHolder' đc tạo từ 'onCreateViewHolder'
+    public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.file_Name.setText(music_Files.get(position).getTitle());
         try {
             byte[] image = getAlbumArt(music_Files.get(position).getPath());
@@ -72,6 +75,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
         return music_Files.size();
     }
 
+    //Lưu trữ các thành phần UI (User interface) cho mỗi mục trong list: file + ảnh album
     public class viewHolder extends RecyclerView.ViewHolder {
         TextView file_Name;
         ImageView album_Art;
@@ -82,7 +86,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
         }
     }
 
-    private byte[] getAlbumArt(String s) throws IOException { //public static ArrayList<MusicFiles> getSongs - explains meaning of Uri there!!
+    //'public static ArrayList<MusicFiles> getSongs' from MainActivity.java line 114 - explains meaning of Uri there!!
+    private byte[] getAlbumArt(String s) throws IOException {
         try {
             MediaMetadataRetriever retriever = new MediaMetadataRetriever();
             retriever.setDataSource(s);
