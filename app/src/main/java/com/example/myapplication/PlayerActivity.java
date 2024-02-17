@@ -35,20 +35,23 @@ public class PlayerActivity extends AppCompatActivity {
     SeekBar seekBar;
     int position = -1;
     static Uri uri;
-    static MediaPlayer mediaPlayer;
+    static MediaPlayer mediaPlayer; //Để phát nhạc và sử dụng các thao tác liên quan tới phát nhạc
     static ArrayList<MusicFiles> listSongs = new ArrayList<>();
-    private Handler handler = new Handler();
-    private Thread playThread, prevThread, nextThread;
+    private Handler handler = new Handler(); //Xử lý cập nhật giao diện người dùng
+    private Thread playThread, prevThread, nextThread; //Xử lý sự kiện: Play/Pause, Previous, Next
+
+
+    //Thiết lập giao diện người dùng và gọi các phương thức khởi tạo khác
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-        initViews();
+        initViews(); //Ánh xạ
         getIntentMethod();
         song_name.setText(listSongs.get(position).getTitle());
         artist_name.setText(listSongs.get(position).getArtist());
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
+            @Override //Cho người dùng thay đổi thời gian của nhạc đang phát
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (mediaPlayer != null && fromUser) {
                     mediaPlayer.seekTo(progress * 1000);
@@ -65,9 +68,9 @@ public class PlayerActivity extends AppCompatActivity {
 
             }
         });
-        PlayerActivity.this.runOnUiThread(new Runnable() {
+        PlayerActivity.this.runOnUiThread(new Runnable() { // 'runOnUiThread' để cập nhật giao diện người dùng liên tục
             @Override
-            public void run() {
+            public void run() { //Hiển thị thời gian đã phát và cập nhật thanh seekbar mỗi giây
                 if (mediaPlayer != null) {
                     int mCurrentPostion = mediaPlayer.getCurrentPosition() / 1000;
                     seekBar.setProgress(mCurrentPostion);
@@ -78,7 +81,7 @@ public class PlayerActivity extends AppCompatActivity {
         });
     }
 
-    @Override
+    @Override //Xử lý các nút Play/Pause, Next, Previous
     protected void onResume() {
         playThreadbtn();
         nextThreadbtn();
@@ -267,6 +270,7 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
+    //Chuyển đơn vị giây -> phút:giây
     private String formattedTime(int mCurrentPosition) {
         String totalout = "";
         String totalNew = "";
@@ -282,6 +286,7 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
+    //Lấy info vị trí bài hát và khởi tạo các thành phần khác
     private void getIntentMethod() {
         position = getIntent().getIntExtra("position", -1);
         listSongs = musicFiles;
@@ -318,6 +323,7 @@ public class PlayerActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.seekBar);
     }
 
+    //Giải thích MetadataRetriever: Truy xuất info từ các tệp multimedia: music, video,... Truy xuất nội dung của tệp: Title, Artist, Album,...
     private void metaData(Uri uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
