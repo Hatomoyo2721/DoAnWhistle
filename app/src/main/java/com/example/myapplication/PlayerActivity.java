@@ -2,8 +2,15 @@ package com.example.myapplication;
 
 import static com.example.myapplication.MainActivity.musicFiles;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -316,17 +324,67 @@ public class PlayerActivity extends AppCompatActivity {
         int durationTotal = Integer.parseInt(listSongs.get(position).getDuration()) / 1000;
         duration_finished.setText(formattedTime(durationTotal));
         byte[] art = retriever.getEmbeddedPicture();
+        Bitmap bitmap;
         if (art != null) {
             Glide.with(this)
                     .asBitmap()
                     .load(art)
                     .into(cover_art);
+            bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(@Nullable Palette palette) {
+                    Palette.Swatch swatch = palette.getDominantSwatch();
+                    if (swatch != null) {
+                        ImageView gredient = findViewById(R.id.imageViewGredient);
+                        RelativeLayout mContainer = findViewById(R.id.container);
+                        gredient.setBackgroundResource(R.drawable.gredient_bg);
+                        mContainer.setBackgroundResource(R.drawable.main_bg);
+
+                        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[] {swatch.getRgb(), 0x00000000});
+                        gredient.setBackground(gradientDrawable);
+
+                        GradientDrawable gradientDrawableBG = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[] {swatch.getRgb(), swatch.getRgb()});
+                        mContainer.setBackground(gradientDrawableBG);
+
+                        song_name.setTextColor(swatch.getTitleTextColor());
+                        artist_name.setTextColor(swatch.getBodyTextColor());
+                    }
+                    else {
+                        ImageView gredient = findViewById(R.id.imageViewGredient);
+                        RelativeLayout mContainer = findViewById(R.id.container);
+                        gredient.setBackgroundResource(R.drawable.gredient_bg);
+                        mContainer.setBackgroundResource(R.drawable.main_bg);
+
+                        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[] {0xff000000, 0x00000000});
+                        gredient.setBackground(gradientDrawable);
+
+                        GradientDrawable gradientDrawableBG = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[] {0xff000000, 0xff000000});
+                        mContainer.setBackground(gradientDrawableBG);
+
+                        song_name.setTextColor(Color.WHITE);
+                        artist_name.setTextColor(Color.DKGRAY);
+                    }
+                }
+            });
         }
         else {
             Glide.with(this)
                     .asBitmap()
                     .load(R.drawable.question_mark)
                     .into(cover_art);
+
+            ImageView gredient = findViewById(R.id.imageViewGredient);
+            RelativeLayout mContainer = findViewById(R.id.container);
+            gredient.setBackgroundResource(R.drawable.gredient_bg);
+            mContainer.setBackgroundResource(R.drawable.main_bg);
+
+            song_name.setTextColor(Color.WHITE);
+            artist_name.setTextColor(Color.DKGRAY);
         }
     }
 }

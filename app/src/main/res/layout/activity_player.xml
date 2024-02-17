@@ -62,10 +62,9 @@
             />
         
         <ImageView
+            android:id="@+id/imageViewGredient"
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:id="@+id/imageViewGredient"
-            android:src="@drawable/gredient_bg"
             android:layout_alignParentBottom="true"
             />
     </RelativeLayout>
