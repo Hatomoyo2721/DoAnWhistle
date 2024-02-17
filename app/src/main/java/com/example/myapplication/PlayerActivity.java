@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -17,6 +18,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -27,7 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnCompletionListener {
 
     TextView song_name, artist_name, duration_played, duration_finished;
     ImageView back_btn, cover_art, next_btn, prev_btn, shuffle_btn, repeat_btn;
@@ -50,6 +53,7 @@ public class PlayerActivity extends AppCompatActivity {
         getIntentMethod();
         song_name.setText(listSongs.get(position).getTitle());
         artist_name.setText(listSongs.get(position).getArtist());
+        mediaPlayer.setOnCompletionListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override //Cho người dùng thay đổi thời gian của nhạc đang phát
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -127,7 +131,8 @@ public class PlayerActivity extends AppCompatActivity {
                     handler.postDelayed(this, 1000);
                 }
             });
-            play_pause_btn.setImageResource(R.drawable.baseline_pause);
+            mediaPlayer.setOnCompletionListener(this);
+            play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
             mediaPlayer.start();
         }
         else {
@@ -151,7 +156,8 @@ public class PlayerActivity extends AppCompatActivity {
                     handler.postDelayed(this, 1000);
                 }
             });
-            play_pause_btn.setImageResource(R.drawable.baseline_play_arrow);
+            mediaPlayer.setOnCompletionListener(this);
+            play_pause_btn.setBackgroundResource(R.drawable.baseline_play_arrow);
         }
     }
 
@@ -193,7 +199,8 @@ public class PlayerActivity extends AppCompatActivity {
                     handler.postDelayed(this, 1000);
                 }
             });
-            play_pause_btn.setImageResource(R.drawable.baseline_pause);
+            mediaPlayer.setOnCompletionListener(this);
+            play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
             mediaPlayer.start();
         }
         else {
@@ -217,7 +224,8 @@ public class PlayerActivity extends AppCompatActivity {
                     handler.postDelayed(this, 1000);
                 }
             });
-            play_pause_btn.setImageResource(R.drawable.baseline_play_arrow);
+            mediaPlayer.setOnCompletionListener(this);
+            play_pause_btn.setBackgroundResource(R.drawable.baseline_play_arrow);
         }
     }
 
@@ -332,11 +340,8 @@ public class PlayerActivity extends AppCompatActivity {
         byte[] art = retriever.getEmbeddedPicture();
         Bitmap bitmap;
         if (art != null) {
-            Glide.with(this)
-                    .asBitmap()
-                    .load(art)
-                    .into(cover_art);
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            ImageAnimation(this, cover_art, bitmap);
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(@Nullable Palette palette) {
@@ -391,6 +396,54 @@ public class PlayerActivity extends AppCompatActivity {
 
             song_name.setTextColor(Color.WHITE);
             artist_name.setTextColor(Color.DKGRAY);
+        }
+    }
+
+    //Effect khi chuyển nhạc khác
+    public void ImageAnimation(Context context, ImageView imageView, Bitmap bitmap) {
+        Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
+        Animation animationIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+        animationOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Glide.with(context).load(bitmap).into(imageView);
+                animationIn.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                imageView.startAnimation(animationIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        imageView.startAnimation(animationOut);
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        nextBtnClicked();
+        if (mediaPlayer != null ) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.start();
+            mediaPlayer.setOnCompletionListener(this);
         }
     }
 }
