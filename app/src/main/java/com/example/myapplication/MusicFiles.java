@@ -6,13 +6,15 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private String artist; //Tác giả
     private String album; //Album của tác giả
     private String duration; //Thời lượng
+    private String id;
 
-    public MusicFiles(String path, String title, String artist, String album, String duration) {
+    public MusicFiles(String path, String title, String artist, String album, String duration, String id) {
         this.path = path;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.duration = duration;
+        this.id = id;
     }
 
     public String getPath() {
@@ -47,4 +49,12 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     }
 
     public MusicFiles() {} ///Create object with empty attribute!!
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }
