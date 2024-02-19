@@ -28,13 +28,6 @@ public class SongsFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
-
-    RecyclerView recyclerView;
-    MusicAdapter musicAdapter;
-    public SongsFragment() {
-        // Required empty public constructor
-    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -64,7 +57,12 @@ public class SongsFragment extends Fragment {
 
 
 
+    RecyclerView recyclerView;
+    MusicAdapter musicAdapter;
 
+    public SongsFragment() {
+        // Required empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
