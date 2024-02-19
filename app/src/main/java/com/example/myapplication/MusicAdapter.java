@@ -91,7 +91,8 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
                 }
 
             });
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
             // Handle the exception, e.g., load a default image or log the error
             Glide.with(music_Context)
