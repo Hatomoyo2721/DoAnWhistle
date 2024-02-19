@@ -30,6 +30,8 @@ import java.util.Currency;
 public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 1;
     static ArrayList<MusicFiles> musicFiles;
+    static boolean shuffleBoolean = false, repeatBoolean = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.DATA, //Data for path (đường dẫn)
-                MediaStore.Audio.Media.ARTIST
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media._ID
         };
         Cursor cursor = context.getContentResolver().query(uri, projection,
                 null, null, null);
@@ -131,8 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 @SuppressLint("Range")String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
                 @SuppressLint("Range")String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
                 @SuppressLint("Range")String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+                @SuppressLint("Range")String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
 
-                MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration);
+                MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
                 //Log.e for check info music
                 Log.e("Path: " + path, "Album" + album);
                 listSongs.add(musicFiles);
