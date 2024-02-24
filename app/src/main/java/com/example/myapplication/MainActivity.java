@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Currency;
 
@@ -31,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE = 1;
     static ArrayList<MusicFiles> musicFiles;
     static boolean shuffleBoolean = false, repeatBoolean = false;
+    static ArrayList<MusicFiles> albums = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static ArrayList<MusicFiles> getSongs(Context context) {
-        ArrayList<MusicFiles> listSongs = new ArrayList<MusicFiles>();
+        ArrayList<String> duplicate = new ArrayList<>();
+
+        ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //Uniform Resource Identifier - Nhận diện tài nguyên thống nhất
         //VD tài nguyên mạng như: documents, pictures, photos, audios, videos,...
         String[] projection = {
@@ -139,10 +144,16 @@ public class MainActivity extends AppCompatActivity {
                 MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
                 //Log.e for check info music
                 Log.e("Path: " + path, "Album" + album);
-                listSongs.add(musicFiles);
+                tempAudioList.add(musicFiles);
+
+                //25 - 02 - 2024: Đã add thêm code -> Album không bị duplicate
+                if (!duplicate.contains(album)) {
+                    albums.add(musicFiles);
+                    duplicate.add(album);
+                }
             }
             cursor.close();
         }
-        return listSongs;
+        return tempAudioList;
     }
 }
