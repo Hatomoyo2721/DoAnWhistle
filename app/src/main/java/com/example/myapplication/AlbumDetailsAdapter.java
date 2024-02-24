@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapter.MyHolder> {
     private Context music_Context;
-    private ArrayList<MusicFiles> album_Files;
+    static ArrayList<MusicFiles> album_Files;
     View v;
 
     public AlbumDetailsAdapter(Context music_Context, ArrayList<MusicFiles> album_Files) {
@@ -58,6 +58,16 @@ public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapte
                     .load(R.drawable.question_mark)
                     .into(holder.album_image);
         }
+        //25 - 02 - 2024: Tạo onClick để chạy Activity qua hàm getIntentMethod ở PlayerActivity.java
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(music_Context, PlayerActivity.class);
+                i.putExtra("sender", "albumDetail");
+                i.putExtra("position", position);
+                music_Context.startActivity(i);
+            }
+        });
     }
 
     @Override
