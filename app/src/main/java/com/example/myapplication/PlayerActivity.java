@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import static com.example.myapplication.AlbumDetailsAdapter.album_Files;
 import static com.example.myapplication.MainActivity.musicFiles;
 import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
@@ -359,10 +360,18 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
         }
     }
 
-    //Lấy info vị trí bài hát và khởi tạo các thành phần khác
+    //Trước 25 - 02 - 2024: Lấy info vị trí bài hát và khởi tạo các thành phần khác
+    //25 - 02 - 2024: Hàm này mới thêm "sender" để chạy được nhạc trong Albums
     private void getIntentMethod() {
         position = getIntent().getIntExtra("position", -1);
-        listSongs = musicFiles;
+        String sender = getIntent().getStringExtra("sender");
+        if (sender != null && sender.equals("albumDetail")) {
+            listSongs = album_Files;
+        }
+        else {
+            listSongs = musicFiles;
+        }
+
         if (listSongs != null) {
             play_pause_btn.setImageResource(R.drawable.baseline_pause);
             uri = Uri.parse(listSongs.get(position).getPath());
@@ -465,7 +474,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
     }
 
     //Effect khi chuyển nhạc khác
-    public void ImageAnimation(Context context, ImageView imageView, Bitmap bitmap) {
+    public void ImageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap) {
         Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
         Animation animationIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
         animationOut.setAnimationListener(new Animation.AnimationListener() {
