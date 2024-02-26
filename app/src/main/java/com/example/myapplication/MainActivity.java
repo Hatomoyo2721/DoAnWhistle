@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     static ArrayList<MusicFiles> musicFiles;
     static boolean shuffleBoolean = false, repeatBoolean = false;
     static ArrayList<MusicFiles> albums = new ArrayList<>();
-
+    private String MY_SORT_PREF = "SortOrder";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,12 +123,34 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    public static ArrayList<MusicFiles> getSongs(Context context) {
-        ArrayList<String> duplicate = new ArrayList<>();
 
+    public ArrayList<MusicFiles> getSongs(Context context) {
+        //Lấy thông tin về thứ tự sắp xếp từ SharedPreferences
+        //Tìm hiểu chức năng của SharedPrefences -> README.md trên Github
+        SharedPreferences preferences = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE);
+        String sortOrder = preferences.getString("sorting", "sortByName");
+
+        ArrayList<String> duplicate = new ArrayList<>();
         ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
+        albums.clear();
+        String order = null;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //Uniform Resource Identifier - Nhận diện tài nguyên thống nhất
         //VD tài nguyên mạng như: documents, pictures, photos, audios, videos,...
+
+        //Function of sorting
+        switch (sortOrder) {
+            case "sortByName":
+                order = MediaStore.MediaColumns.DISPLAY_NAME + " ASC";
+                break;
+            case "sortByDate":
+                order = MediaStore.MediaColumns.DATE_ADDED + " ASC";
+                break;
+            case "sortBySize":
+                order = MediaStore.MediaColumns.SIZE + " DESC";
+                break;
+        }
+
+        //Mảng chỉ định các cột dữ liệu
         String[] projection = {
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.TITLE,
@@ -137,8 +159,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media._ID
         };
+
+        // Truy vấn ContentResolver để lấy dữ liệu từ MediaStore
         Cursor cursor = context.getContentResolver().query(uri, projection,
-                null, null, null);
+                null, null, order);
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 @SuppressLint("Range")String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
@@ -195,5 +219,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         SongsFragment.musicAdapter.updateList(myFiles);
         return true;
+    }
+
+
+    //27 - 02 - 2024
+    //Create menu for sorting songs
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        SharedPreferences.Editor editor = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE).edit();
+        switch (item.getItemId()) {
+            case R.id.by_name:
+                editor.putString("sorting", "sortByName");
+                editor.apply();
+                this.recreate();
+                break;
+            case R.id.by_date:
+                editor.putString("sorting", "sortByDate");
+                editor.apply();
+                this.recreate();
+                break;
+            case R.id.by_size:
+                editor.putString("sorting", "sortBySize");
+                editor.apply();
+                this.recreate();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
