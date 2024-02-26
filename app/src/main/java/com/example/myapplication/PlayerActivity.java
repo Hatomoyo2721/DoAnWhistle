@@ -539,14 +539,17 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
+    //27 - 02 - 2024
+    //Hàm thông báo khi kết nối service thành công / ngắt kết nối
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
         MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
         musicService = myBinder.getService();
-        Toast.makeText(this, "Connected" + musicService,
+        Toast.makeText(this, "Kết nối thành công" + musicService,
                 Toast.LENGTH_SHORT).show();
     }
 
+    //27 - 02 - 2024
     @Override
     public void onServiceDisconnected(ComponentName name) {
         musicService = null;
