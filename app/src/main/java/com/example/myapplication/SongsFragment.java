@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import static com.example.myapplication.MainActivity.musicFiles;
+import static com.example.myapplication.MusicAdapter.music_Files;
 
 import android.os.Bundle;
 
@@ -58,7 +59,7 @@ public class SongsFragment extends Fragment {
 
 
     RecyclerView recyclerView;
-    MusicAdapter musicAdapter;
+    static MusicAdapter musicAdapter;
 
     public SongsFragment() {
         // Required empty public constructor
