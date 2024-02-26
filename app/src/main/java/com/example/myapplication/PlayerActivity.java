@@ -4,6 +4,7 @@ import static com.example.myapplication.AlbumDetailsAdapter.album_Files;
 import static com.example.myapplication.MainActivity.musicFiles;
 import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
+import static com.example.myapplication.MusicAdapter.music_Files;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -369,7 +370,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
             listSongs = album_Files;
         }
         else {
-            listSongs = musicFiles;
+            listSongs = music_Files; //Change a bit here musicFiles (MainActivity) -> music_Files (MusicAdapter)
         }
 
         if (listSongs != null) {
@@ -473,6 +474,7 @@ public class PlayerActivity extends AppCompatActivity implements MediaPlayer.OnC
         }
     }
 
+    //26 - 02 - 2024
     //Effect khi chuyển nhạc khác
     public void ImageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap) {
         Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
