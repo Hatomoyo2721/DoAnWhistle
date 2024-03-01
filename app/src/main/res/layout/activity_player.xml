@@ -144,6 +144,8 @@
             android:clickable="true"
             android:contentDescription="Play/Pause Button"
             app:shapeAppearance="@style/circleShape"
+            android:backgroundTint="#808080"
+            app:borderWidth="0dp"
             />
 
         <ImageView
