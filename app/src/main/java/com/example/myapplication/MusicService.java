@@ -1,13 +1,18 @@
 package com.example.myapplication;
 
+import static com.example.myapplication.ApplicationClass.ACTION_NEXT;
+import static com.example.myapplication.ApplicationClass.ACTION_PLAY;
+import static com.example.myapplication.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.myapplication.PlayerActivity.listSongs;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.AtomicFile;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -51,8 +56,53 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (myPosition != -1) {
             playMedia(myPosition);
         }
+
+        String actionName = intent.getStringExtra("ActionName");
+        if (actionName != null) {
+            switch (actionName) {
+
+                case "playPause":
+                    Toast.makeText(this, "PlayPause", Toast.LENGTH_SHORT).show();
+                    if (actionPlaying != null) {
+                        actionPlaying.playPauseBtnClicked();
+                    }
+                    break;
+
+                case "Next":
+                    Toast.makeText(this, "Next", Toast.LENGTH_SHORT).show();
+                    if (actionPlaying != null) {
+                        actionPlaying.nextBtnClicked();
+                    }
+                    break;
+
+                case "Previous":
+                    Toast.makeText(this, "Previous", Toast.LENGTH_SHORT).show();
+                    if (actionPlaying != null) {
+                        actionPlaying.prevBtnClicked();
+                    }
+                    break;
+
+//            case ACTION_PLAY:
+//                if (actionPlaying != null) {
+//                    actionPlaying.playPauseBtnClicked();
+//                }
+//                break;
+//
+//            case ACTION_NEXT:
+//                if (actionPlaying != null) {
+//                    actionPlaying.nextBtnClicked();
+//                }
+//                break;
+//
+//            case ACTION_PREVIOUS:
+//                if (actionPlaying != null) {
+//                    actionPlaying.prevBtnClicked();
+//                }
+//                break;
+            }
+        }
         return START_STICKY;
-//        return START_STICKY_COMPATIBILITY;
+//      return START_STICKY_COMPATIBILITY;
     }
 
     private void playMedia(int StartPosition) {
