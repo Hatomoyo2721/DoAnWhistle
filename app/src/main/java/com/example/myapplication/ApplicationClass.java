@@ -22,7 +22,7 @@ public class ApplicationClass extends Application {
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             NotificationChannel channel1 =
                     new NotificationChannel(CHANNEL_ID_1,
                             "Channel 1", NotificationManager.IMPORTANCE_HIGH);
