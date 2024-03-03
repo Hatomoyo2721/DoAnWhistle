@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
@@ -36,8 +37,9 @@ import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
-    public static final int REQUEST_CODE = 1;
-    static ArrayList<MusicFiles> musicFiles;
+    private static final int REQUEST_CODE = 1;
+    private static final String TAG = "songs";
+    public static ArrayList<MusicFiles> musicFiles;
     static boolean shuffleBoolean = false, repeatBoolean = false;
     static ArrayList<MusicFiles> albums = new ArrayList<>();
     private String MY_SORT_PREF = "SortOrder";
@@ -53,9 +55,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 //(Có dòng import android.Manifest mới xài được WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
-                    , REQUEST_CODE);
+
+//            Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
+
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE);
         }
         else {
             musicFiles = getSongs(this);
@@ -68,16 +73,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Do what ever you want permission related
-                Toast.makeText(this, "Quyền đã được cấp", Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "Quyền đã được cấp", Toast.LENGTH_LONG).show();
                 musicFiles = getSongs(this);
                 initViewPager();
             }
             else {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}
-                        , REQUEST_CODE);
-                Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_CODE);
+//                Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -90,6 +97,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         vPagerAdapter.addFragments(new AlbumFragment(), "Album");
         vPager.setAdapter(vPagerAdapter);
         tabLayout.setupWithViewPager(vPager);
+
+        // 3 / 3 / 2024
+        //custom_tab_layout for editing text size
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setCustomView(R.layout.custom_tab_layout);
+                TextView tabTextView = tab.getCustomView().findViewById(R.id.customTab);
+                tabTextView.setText(tab.getText());
+            }
+        }
     }
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter { //Quản lý fragments và titles
@@ -118,6 +136,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             return fragments.size();
         }
 
+        @Nullable
+        @Override
         public CharSequence getPageTitle(int position) {
             return titles.get(position);
         }
@@ -127,12 +147,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public ArrayList<MusicFiles> getSongs(Context context) {
         //Lấy thông tin về thứ tự sắp xếp từ SharedPreferences
         //Tìm hiểu chức năng của SharedPrefences -> README.md trên Github
-        SharedPreferences preferences = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE);
-        String sortOrder = preferences.getString("sorting", "sortByName");
+        SharedPreferences preferences =
+                getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE);
+        String sortOrder = preferences.getString("sorting",
+                "SortByName");
 
         ArrayList<String> duplicate = new ArrayList<>();
-        ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
         albums.clear();
+        ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
         String order = null;
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //Uniform Resource Identifier - Nhận diện tài nguyên thống nhất
         //VD tài nguyên mạng như: documents, pictures, photos, audios, videos,...
@@ -174,7 +196,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
                 //Log.e for check info music
-                Log.e("Path: " + path, "Album" + album);
+                Log.e(TAG, "Path:" + path + "Album: " + album);
+//                Log.e("Path: " + path, "Album" + album);
                 tempAudioList.add(musicFiles);
 
                 //25 - 02 - 2024: Đã add thêm code -> Album không bị duplicate
@@ -194,10 +217,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
         MenuItem menuItem = menu.findItem(R.id.search_option);
-
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(this);
-
         return super.onCreateOptionsMenu(menu);
     }
 
