@@ -588,22 +588,22 @@ public class PlayerActivity extends AppCompatActivity
                 .setAction(ACTION_PREVIOUS);
         PendingIntent prevPending = PendingIntent.
                 getBroadcast(this, 0, prevIntent,
-              PendingIntent.FLAG_IMMUTABLE);
- //               PendingIntent.FLAG_UPDATE_CURRENT);
+//              PendingIntent.FLAG_IMMUTABLE);
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_PLAY);
         PendingIntent pausePending = PendingIntent.
                 getBroadcast(this, 0, pauseIntent,
-              PendingIntent.FLAG_IMMUTABLE);
-  //             PendingIntent.FLAG_UPDATE_CURRENT);
+//              PendingIntent.FLAG_IMMUTABLE);
+               PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, NotificationReceiver.class)
-                .setAction(ACTION_PREVIOUS);
+                .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.
                 getBroadcast(this, 0, nextIntent,
-             PendingIntent.FLAG_IMMUTABLE);
-    //           PendingIntent.FLAG_UPDATE_CURRENT);
+//             PendingIntent.FLAG_IMMUTABLE);
+               PendingIntent.FLAG_UPDATE_CURRENT);
 
         byte[] picture = getAlbumArt(listSongs.get(position).getPath());
         Bitmap thumb = null;
