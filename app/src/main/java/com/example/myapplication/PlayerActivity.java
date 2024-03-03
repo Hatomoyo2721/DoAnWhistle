@@ -563,6 +563,7 @@ public class PlayerActivity extends AppCompatActivity
     public void onServiceConnected(ComponentName name, IBinder service) {
         MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
         musicService = myBinder.getService();
+        musicService.setCallBack(this);
 //        Toast.makeText(this, "Kết nối thành công" + musicService,
 //                Toast.LENGTH_SHORT).show();
         seekBar.setMax(musicService.getDuration() / 1000);
@@ -588,22 +589,22 @@ public class PlayerActivity extends AppCompatActivity
                 .setAction(ACTION_PREVIOUS);
         PendingIntent prevPending = PendingIntent.
                 getBroadcast(this, 0, prevIntent,
-//              PendingIntent.FLAG_IMMUTABLE);
-                PendingIntent.FLAG_UPDATE_CURRENT);
+              PendingIntent.FLAG_IMMUTABLE);
+//                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_PLAY);
         PendingIntent pausePending = PendingIntent.
                 getBroadcast(this, 0, pauseIntent,
-//              PendingIntent.FLAG_IMMUTABLE);
-               PendingIntent.FLAG_UPDATE_CURRENT);
+              PendingIntent.FLAG_IMMUTABLE);
+//               PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.
                 getBroadcast(this, 0, nextIntent,
-//             PendingIntent.FLAG_IMMUTABLE);
-               PendingIntent.FLAG_UPDATE_CURRENT);
+             PendingIntent.FLAG_IMMUTABLE);
+//               PendingIntent.FLAG_UPDATE_CURRENT);
 
         byte[] picture = getAlbumArt(listSongs.get(position).getPath());
         Bitmap thumb = null;
@@ -631,7 +632,7 @@ public class PlayerActivity extends AppCompatActivity
                             .setMediaSession(mediaSessionCompat.getSessionToken()))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setOnlyAlertOnce(true)
-                    .setContentIntent(contentIntent)
+//                    .setContentIntent(contentIntent)
                     .build();
 
             NotificationManager notificationManager =
