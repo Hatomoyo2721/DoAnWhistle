@@ -62,7 +62,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             switch (actionName) {
 
                 case "playPause":
-                    Toast.makeText(this, "PlayPause", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Run / Pause", Toast.LENGTH_SHORT).show();
                     if (actionPlaying != null) {
                         Log.e("Inside", "Action");
                         actionPlaying.playPauseBtnClicked();
