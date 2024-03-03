@@ -9,11 +9,11 @@ import android.os.Build;
 //27 - 02 - 2024
 //Create notification when play a song
 public class ApplicationClass extends Application {
-    public static final String CHANNEL_ID_1 = "channel1";
-    public static final String CHANNEL_ID_2 = "channel2";
-    public static final String ACTION_PREVIOUS = "actionprevious";
-    public static final String ACTION_NEXT = "actionnext";
-    public static final String ACTION_PLAY = "actionplay";
+    public static final String CHANNEL_ID_1 = "CHANNEL_1";
+    public static final String CHANNEL_ID_2 = "CHANNEL_2";
+    public static final String ACTION_PREVIOUS = "PREVIOUS";
+    public static final String ACTION_NEXT = "NEXT";
+    public static final String ACTION_PLAY = "PLAY";
 
     @Override
     public void onCreate() {
