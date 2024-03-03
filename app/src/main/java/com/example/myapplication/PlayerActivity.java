@@ -583,28 +583,25 @@ public class PlayerActivity extends AppCompatActivity
 
         Intent intent = new Intent(this, PlayerActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
-                this,  0, intent, PendingIntent.FLAG_IMMUTABLE);
+                this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         Intent prevIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_PREVIOUS);
         PendingIntent prevPending = PendingIntent.
                 getBroadcast(this, 0, prevIntent,
               PendingIntent.FLAG_IMMUTABLE);
-//                PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent pauseIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_PLAY);
         PendingIntent pausePending = PendingIntent.
                 getBroadcast(this, 0, pauseIntent,
               PendingIntent.FLAG_IMMUTABLE);
-//               PendingIntent.FLAG_UPDATE_CURRENT);
 
         Intent nextIntent = new Intent(this, NotificationReceiver.class)
                 .setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.
                 getBroadcast(this, 0, nextIntent,
              PendingIntent.FLAG_IMMUTABLE);
-//               PendingIntent.FLAG_UPDATE_CURRENT);
 
         byte[] picture = getAlbumArt(listSongs.get(position).getPath());
         Bitmap thumb = null;
@@ -632,7 +629,6 @@ public class PlayerActivity extends AppCompatActivity
                             .setMediaSession(mediaSessionCompat.getSessionToken()))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setOnlyAlertOnce(true)
-//                    .setContentIntent(contentIntent)
                     .build();
 
             NotificationManager notificationManager =
