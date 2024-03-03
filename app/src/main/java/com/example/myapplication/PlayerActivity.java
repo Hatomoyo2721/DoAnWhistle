@@ -72,7 +72,7 @@ public class PlayerActivity extends AppCompatActivity
     private Handler handler = new Handler(); //Xử lý cập nhật giao diện người dùng
     private Thread playThread, prevThread, nextThread; //Xử lý sự kiện: Play/Pause, Previous, Next
     MusicService musicService;
-    MediaSessionCompat mediaSessionCompat;
+
 
     //Thiết lập giao diện người dùng và gọi các phương thức khởi tạo khác
     @Override
@@ -81,7 +81,6 @@ public class PlayerActivity extends AppCompatActivity
         setFullScreen();
         setContentView(R.layout.activity_player);
         getSupportActionBar().hide();
-        mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
         initViews(); //Ánh xạ
         getIntentMethod();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -210,7 +209,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
                 musicService.OnCompleted();
-                showNotification(R.drawable.baseline_pause);
+                musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
                 musicService.start();
             } else {
@@ -241,7 +240,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
                 musicService.OnCompleted();
-                showNotification(R.drawable.baseline_play_arrow);
+                musicService.showNotification(R.drawable.baseline_play_arrow);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_play_arrow);
             }
         } catch (IOException e) {
@@ -296,7 +295,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
                 musicService.OnCompleted();
-                showNotification(R.drawable.baseline_pause);
+                musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
                 musicService.start();
             } else {
@@ -327,7 +326,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
                 musicService.OnCompleted();
-                showNotification(R.drawable.baseline_play_arrow);
+                musicService.showNotification(R.drawable.baseline_play_arrow);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_play_arrow);
             }
         } catch (IOException e) {
@@ -355,7 +354,7 @@ public class PlayerActivity extends AppCompatActivity
         try {
             if (musicService.isPlaying()) {
                 play_pause_btn.setImageResource(R.drawable.baseline_play_arrow);
-                showNotification(R.drawable.baseline_play_arrow);
+                musicService.showNotification(R.drawable.baseline_play_arrow);
                 musicService.pause();
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -369,7 +368,7 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
             } else {
-                showNotification(R.drawable.baseline_pause);
+                musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setImageResource(R.drawable.baseline_pause);
                 musicService.start();
                 seekBar.setMax(musicService.getDuration() / 1000);
@@ -412,7 +411,6 @@ public class PlayerActivity extends AppCompatActivity
     //Trước 25 - 02 - 2024: Lấy info vị trí bài hát và khởi tạo các thành phần khác
     //25 - 02 - 2024: Hàm này mới thêm "sender" để chạy được nhạc trong Albums
     private void getIntentMethod() {
-        try {
             position = getIntent().getIntExtra("position", -1);
             String sender = getIntent().getStringExtra("sender");
             if (sender != null && sender.equals("albumDetail")) {
@@ -425,13 +423,9 @@ public class PlayerActivity extends AppCompatActivity
                 play_pause_btn.setImageResource(R.drawable.baseline_pause);
                 uri = Uri.parse(listSongs.get(position).getPath());
             }
-            showNotification(R.drawable.baseline_pause);
             Intent i = new Intent(this, MusicService.class);
             i.putExtra("servicePosition", position);
             startService(i);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void initViews() {
@@ -561,16 +555,22 @@ public class PlayerActivity extends AppCompatActivity
     //Hàm thông báo khi kết nối service thành công / ngắt kết nối
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
-        MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
-        musicService = myBinder.getService();
-        musicService.setCallBack(this);
+        try {
+            MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
+            musicService = myBinder.getService();
+            musicService.setCallBack(this);
 //        Toast.makeText(this, "Kết nối thành công" + musicService,
 //                Toast.LENGTH_SHORT).show();
-        seekBar.setMax(musicService.getDuration() / 1000);
-        metaData(uri);
-        song_name.setText(listSongs.get(position).getTitle());
-        artist_name.setText(listSongs.get(position).getArtist());
-        musicService.OnCompleted();
+            seekBar.setMax(musicService.getDuration() / 1000);
+            metaData(uri);
+            song_name.setText(listSongs.get(position).getTitle());
+            artist_name.setText(listSongs.get(position).getArtist());
+            musicService.OnCompleted();
+            musicService.showNotification(R.drawable.baseline_pause);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //27 - 02 - 2024
@@ -579,78 +579,4 @@ public class PlayerActivity extends AppCompatActivity
         musicService = null;
     }
 
-    void showNotification(int playPauseBtn) throws IOException {
-
-        Intent intent = new Intent(this, PlayerActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(
-                this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        Intent prevIntent = new Intent(this, NotificationReceiver.class)
-                .setAction(ACTION_PREVIOUS);
-        PendingIntent prevPending = PendingIntent.
-                getBroadcast(this, 0, prevIntent,
-              PendingIntent.FLAG_IMMUTABLE);
-
-        Intent pauseIntent = new Intent(this, NotificationReceiver.class)
-                .setAction(ACTION_PLAY);
-        PendingIntent pausePending = PendingIntent.
-                getBroadcast(this, 0, pauseIntent,
-              PendingIntent.FLAG_IMMUTABLE);
-
-        Intent nextIntent = new Intent(this, NotificationReceiver.class)
-                .setAction(ACTION_NEXT);
-        PendingIntent nextPending = PendingIntent.
-                getBroadcast(this, 0, nextIntent,
-             PendingIntent.FLAG_IMMUTABLE);
-
-        byte[] picture = getAlbumArt(listSongs.get(position).getPath());
-        Bitmap thumb = null;
-        if (picture != null) {
-            thumb = BitmapFactory.decodeByteArray(picture, 0, picture.length);
-        }
-        else {
-            thumb = BitmapFactory.decodeResource(getResources(), R.drawable.question_mark);
-        }
-
-        //mediaSessionCompat didn't work
-        if (mediaSessionCompat == null) {
-            Log.e("PlayerActivity", "mediaSessionCompat is null");
-            return;
-        }
-            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
-                    .setSmallIcon(playPauseBtn)
-                    .setLargeIcon(thumb)
-                    .setContentTitle(listSongs.get(position).getTitle())
-                    .setContentText(listSongs.get(position).getArtist())
-                    .addAction(R.drawable.baseline_skip_previous, "Previous", prevPending)
-                    .addAction(playPauseBtn, "Pause", pausePending)
-                    .addAction(R.drawable.baseline_skip_next, "Next", nextPending)
-                    .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
-                            .setMediaSession(mediaSessionCompat.getSessionToken()))
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setOnlyAlertOnce(true)
-                    .build();
-
-            NotificationManager notificationManager =
-                    (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(0, notification);
-    }
-
-    private byte[] getAlbumArt(String s) throws IOException {
-        try {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(s);
-            byte[] art = retriever.getEmbeddedPicture();
-            retriever.release();
-
-            if (art != null) {
-                return art;
-            }
-            return null;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 }
