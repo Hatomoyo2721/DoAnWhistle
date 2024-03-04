@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/audio_item"
     android:layout_marginTop="5dp"
     android:background="#3E3E3E">
@@ -25,6 +26,19 @@
         android:layout_toStartOf="@id/menuMore"
         android:textColor="#FFFFFF"
         />
+
+    <ImageButton
+        android:id="@+id/btn_favourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/baseline_no_favorite_border"
+        android:scaleType="center"
+        app:tint="#FFF"
+        android:layout_toStartOf="@id/menuMore"
+        android:layout_centerVertical="true"/>
+
+  />
 
     <ImageView
         android:id="@+id/menuMore"
