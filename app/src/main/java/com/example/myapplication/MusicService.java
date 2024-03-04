@@ -81,26 +81,17 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
                 case "playPause":
 //                    Toast.makeText(this, "Run / Pause", Toast.LENGTH_SHORT).show();
-                    if (actionPlaying != null) {
-                        Log.e("Inside", "Action");
-                        actionPlaying.playPauseBtnClicked();
-                    }
+                    playPauseBtnClicked();
                     break;
 
                 case "Next":
 //                    Toast.makeText(this, "Next", Toast.LENGTH_SHORT).show();
-                    if (actionPlaying != null) {
-                        Log.e("Inside", "Action");
-                        actionPlaying.nextBtnClicked();
-                    }
+                    nextBtnClicked();
                     break;
 
                 case "Previous":
 //                    Toast.makeText(this, "Previous", Toast.LENGTH_SHORT).show();
-                    if (actionPlaying != null) {
-                        Log.e("Inside", "Action");
-                        actionPlaying.prevBtnClicked();
-                    }
+                    previousBtnClicked();
                     break;
             }
         }
@@ -162,6 +153,8 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE).edit();
         editor.putString(MUSIC_FILE, uri.toString());
+        editor.putString(ARTIST_NAME, musicFiles.get(position).getArtist());
+        editor.putString(SONG_NAME, musicFiles.get(position).getTitle());
         editor.apply();
 
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
@@ -263,5 +256,22 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
     }
 
+    void playPauseBtnClicked() {
+        if (actionPlaying != null) {
+            actionPlaying.playPauseBtnClicked();
+        }
+    }
+
+    void previousBtnClicked() {
+        if (actionPlaying != null) {
+            actionPlaying.prevBtnClicked();
+        }
+    }
+
+    void nextBtnClicked() {
+        if (actionPlaying != null) {
+            actionPlaying.nextBtnClicked();
+        }
+    }
 }
 
