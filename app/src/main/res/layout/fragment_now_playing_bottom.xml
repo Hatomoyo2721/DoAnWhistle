@@ -48,7 +48,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginStart="15dp"
             android:layout_toEndOf="@id/bottom_album_art"
-            android:textSize="17sp"
+            android:textSize="14sp"
             android:maxLines="1"
             android:layout_toStartOf="@id/play_pause_miniPlayer"/>
 
@@ -57,11 +57,11 @@
             android:layout_height="wrap_content"
             android:id="@+id/song_artist_miniPlayer"
             android:textColor="#fff"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:layout_marginStart="15dp"
             android:layout_toEndOf="@id/bottom_album_art"
             android:layout_below="@id/song_name_miniPlayer"
-            android:textSize="15sp"
+            android:textSize="11sp"
             android:maxLines="1"
             android:layout_toStartOf="@id/play_pause_miniPlayer"/>
 

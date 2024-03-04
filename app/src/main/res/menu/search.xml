@@ -16,23 +16,23 @@
         -->
         <item
             android:id="@+id/sort_options"
-            android:title="Sort by"
+            android:title="Sắp xếp"
             app:showAsAction="never">
 
             <menu>
                 <item
                     android:id="@+id/by_name"
-                    android:title="Name"
+                    android:title="Tên"
                     app:showAsAction="never"/>
 
                 <item
                     android:id="@+id/by_date"
-                    android:title="Date"
+                    android:title="Ngày"
                     app:showAsAction="never"/>
 
                 <item
                     android:id="@+id/by_size"
-                    android:title="Size"
+                    android:title="Thời lượng"
                     app:showAsAction="never"/>
 
             </menu>

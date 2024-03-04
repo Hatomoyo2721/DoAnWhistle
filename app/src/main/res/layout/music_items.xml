@@ -38,8 +38,6 @@
         android:layout_toStartOf="@id/menuMore"
         android:layout_centerVertical="true"/>
 
-  />
-
     <ImageView
         android:id="@+id/menuMore"
         android:layout_width="60dp"
@@ -48,4 +46,5 @@
         android:padding="10dp"
         android:layout_alignParentEnd="true"
         />
+
 </RelativeLayout>
