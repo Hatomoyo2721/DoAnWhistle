@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat; //Cung cấp phương tiện tiện 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 import android.Manifest;
 
@@ -44,6 +45,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     static boolean shuffleBoolean = false, repeatBoolean = false;
     static ArrayList<MusicFiles> albums = new ArrayList<>();
     private String MY_SORT_PREF = "SortOrder";
+    public static final String MUSIC_FILE_LAST_PLAYED = "LAST_PLAYED";
+    public static final String MUSIC_FILE = "STORED_MUSIC";
+    public static boolean SHOW_MINI_PLAYER = false;
+    public static String PATH_TO_FRAG =  null;
+    public static final String ARTIST_NAME = "ARTIST NAME";
+    public static final String SONG_NAME = "SONG NAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -267,5 +274,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences preferences = getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE);
+        String value = preferences.getString(MUSIC_FILE, null);
+        if (value != null) {
+            SHOW_MINI_PLAYER = true;
+            PATH_TO_FRAG = value;
+        }
+        else {
+            SHOW_MINI_PLAYER = false;
+            PATH_TO_FRAG = null;
+        }
     }
 }
