@@ -12,6 +12,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -42,6 +43,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     ActionPlaying actionPlaying;
     MediaSessionCompat mediaSessionCompat;
     private static final int NOTIFICATION_ID = 1;
+    public static final String MUSIC_FILE_LAST_PLAYED = "LAST_PLAYED";
+    public static final String MUSIC_FILE = "STORED_MUSIC";
+    public static final String ARTIST_NAME = "ARTIST NAME";
+    public static final String SONG_NAME = "SONG NAME";
 
     @Override
     public void onCreate() {
@@ -75,7 +80,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             switch (actionName) {
 
                 case "playPause":
-                    Toast.makeText(this, "Run / Pause", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Run / Pause", Toast.LENGTH_SHORT).show();
                     if (actionPlaying != null) {
                         Log.e("Inside", "Action");
                         actionPlaying.playPauseBtnClicked();
@@ -83,7 +88,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                     break;
 
                 case "Next":
-                    Toast.makeText(this, "Next", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Next", Toast.LENGTH_SHORT).show();
                     if (actionPlaying != null) {
                         Log.e("Inside", "Action");
                         actionPlaying.nextBtnClicked();
@@ -91,30 +96,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                     break;
 
                 case "Previous":
-                    Toast.makeText(this, "Previous", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "Previous", Toast.LENGTH_SHORT).show();
                     if (actionPlaying != null) {
                         Log.e("Inside", "Action");
                         actionPlaying.prevBtnClicked();
                     }
                     break;
-
-//            case ACTION_PLAY:
-//                if (actionPlaying != null) {
-//                    actionPlaying.playPauseBtnClicked();
-//                }
-//                break;
-//
-//            case ACTION_NEXT:
-//                if (actionPlaying != null) {
-//                    actionPlaying.nextBtnClicked();
-//                }
-//                break;
-//
-//            case ACTION_PREVIOUS:
-//                if (actionPlaying != null) {
-//                    actionPlaying.prevBtnClicked();
-//                }
-//                break;
             }
         }
         return START_STICKY;
@@ -172,6 +159,11 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     void createMediaPlayer(int positionInner) {
         position = positionInner;
         uri = Uri.parse(musicFiles.get(position).getPath());
+
+        SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE).edit();
+        editor.putString(MUSIC_FILE, uri.toString());
+        editor.apply();
+
         mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
     }
 
