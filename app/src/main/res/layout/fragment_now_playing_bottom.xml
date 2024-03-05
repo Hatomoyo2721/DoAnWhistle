@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/fragment_bottom"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".NowPlayingFragmentBottom">
+    tools:context=".NowPlayingFragmentBottom"
+    android:clickable="true">
 
     <RelativeLayout
         android:id="@+id/card_bottom_player"

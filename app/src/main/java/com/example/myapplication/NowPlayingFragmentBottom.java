@@ -9,6 +9,7 @@ import static com.example.myapplication.MainActivity.SHOW_MINI_PLAYER;
 import static com.example.myapplication.MainActivity.SONG_NAME_TO_FRAG;
 import static com.example.myapplication.MainActivity.musicFiles;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -23,7 +24,9 @@ import android.os.IBinder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +62,16 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         albumArt = v.findViewById(R.id.bottom_album_art);
         nextBtn = v.findViewById(R.id.skip_next_bottom);
         playPauseBtn = v.findViewById(R.id.play_pause_miniPlayer);
+
+        RelativeLayout cardBottomPlayer = v.findViewById(R.id.card_bottom_player);
+        cardBottomPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), PlayerActivity.class);
+                startActivity(i);
+            }
+        });
+
 
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -180,7 +180,7 @@ public class PlayerActivity extends AppCompatActivity
 
     public void prevBtnClicked() {
         try {
-            if (musicService.isPlaying()) {
+            if (musicService.isPlaying() && !listSongs.isEmpty()) {
                 musicService.stop();
                 musicService.release();
 
@@ -190,6 +190,7 @@ public class PlayerActivity extends AppCompatActivity
                     position = ((position - 1) < 0 ? (listSongs.size() - 1) : (position - 1));
                 }
 
+                position = Math.max(0, Math.min(position, listSongs.size() - 1)); // 5 / 3 / 2024
 
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
@@ -266,7 +267,7 @@ public class PlayerActivity extends AppCompatActivity
 
     public void nextBtnClicked() {
         try {
-            if (musicService.isPlaying()) {
+            if (musicService.isPlaying() && !listSongs.isEmpty()) {
                 musicService.stop();
                 musicService.release();
 
@@ -276,6 +277,7 @@ public class PlayerActivity extends AppCompatActivity
                     position = ((position + 1) % listSongs.size());
                 }
                 //else position will be position...
+                position = Math.max(0, Math.min(position, listSongs.size() - 1)); // 5 / 3 2024
 
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
