@@ -23,40 +23,35 @@
         android:hint="Description"
         android:inputType="text"/>
 
+    <EditText
+        android:id="@+id/edit_text_priority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Priority"
+        android:inputType="number"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
-        android:onClick="saveNote"/>
+        android:text="Add"
+        android:onClick="addNote"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Load"
-        android:onClick="loadNote"/>
+        android:onClick="loadNotes"/>
 
-    <Button
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Update description"
-        android:onClick="updateDescription"/>
+        android:layout_height="wrap_content">
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete description"
-        android:onClick="deleteDescription"/>
+        <TextView
+            android:id="@+id/text_view_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete note"
-        android:onClick="deleteNote"/>
 
-    <TextView
-        android:id="@+id/text_view_data"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="15sp"/>
-
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>
