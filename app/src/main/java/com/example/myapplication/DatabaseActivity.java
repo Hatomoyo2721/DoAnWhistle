@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -78,8 +79,13 @@ public class DatabaseActivity extends AppCompatActivity {
                     String documentId = note.getDocumentId();
                     String title = note.getTitle();
                     String description = note.getDescription();
+                    int priority = note.getPriority();
 
-                    data += "ID: " + documentId + "\nTitle: " + title + "\n" + "Description: " + description + "\n\n";
+                    data += "ID: " + documentId +
+                            "\nTitle: " + title +
+                            "\nDescription: " + description +
+                            "\nPriority: " + priority +
+                            "\n\n";
 
                 }
 
@@ -101,22 +107,6 @@ public class DatabaseActivity extends AppCompatActivity {
         Note note = new Note(title, description, priority);
 
         notebookRef.add(note);
-
-
-//        noteRef.set(note)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//                        Toast.makeText(DatabaseActivity.this, "Note saved", Toast.LENGTH_SHORT).show();
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(DatabaseActivity.this, "Error!", Toast.LENGTH_SHORT).show();
-//                        Log.d(TAG, e.toString());
-//                    }
-//                });
 
     }
 
@@ -144,7 +134,10 @@ public class DatabaseActivity extends AppCompatActivity {
 //    }
 
     public void loadNotes(View v) {
-       notebookRef.get()
+       notebookRef.whereGreaterThanOrEqualTo("priority", 1)
+               .orderBy("priority", Query.Direction.DESCENDING)
+               .limit(3)
+               .get()
                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                    @Override
                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -156,8 +149,13 @@ public class DatabaseActivity extends AppCompatActivity {
                             String documentId = note.getDocumentId();
                             String title = note.getTitle();
                             String description = note.getDescription();
+                            int priority = note.getPriority();
 
-                            data += "ID: " + documentId + "\nTitle: " + title + "\n" + "Description: " + description + "\n\n";
+                            data += "ID: " + documentId +
+                                    "\nTitle: " + title +
+                                    "\nDescription: " + description +
+                                    "\nPriority: " + priority +
+                                    "\n\n";
                         }
                         textViewData.setText(data);
                    }
