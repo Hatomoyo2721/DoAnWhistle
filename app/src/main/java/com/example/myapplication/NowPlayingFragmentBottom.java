@@ -63,20 +63,9 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         nextBtn = v.findViewById(R.id.skip_next_bottom);
         playPauseBtn = v.findViewById(R.id.play_pause_miniPlayer);
 
-        RelativeLayout cardBottomPlayer = v.findViewById(R.id.card_bottom_player);
-        cardBottomPlayer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getActivity(), PlayerActivity.class);
-                startActivity(i);
-            }
-        });
-
-
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getContext(), "Next", Toast.LENGTH_SHORT).show();
                 if (musicService != null) {
                     musicService.nextBtnClicked();
                     if (getActivity() != null) {

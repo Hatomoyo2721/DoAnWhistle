@@ -18,7 +18,7 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     }
 
     public String getPath() {
-        return path;
+        return path != null ? path : "";
     }
     public void setPath(String path) {
         this.path = path;

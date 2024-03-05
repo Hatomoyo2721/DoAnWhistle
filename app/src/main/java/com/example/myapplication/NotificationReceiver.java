@@ -16,20 +16,16 @@ public class NotificationReceiver extends BroadcastReceiver {
         if (actionName != null) {
             switch (actionName) {
                 case ACTION_PLAY:
-//                    serviceIntent.putExtra("ActionName", intent.getAction());
                     serviceIntent.putExtra("ActionName", "playPause");
                     context.startService(serviceIntent);
                     break;
 
                 case ACTION_NEXT:
-//                    serviceIntent.putExtra("ActionName", intent.getAction());
                     serviceIntent.putExtra("ActionName", "Next");
-
                     context.startService(serviceIntent);
                     break;
 
                 case ACTION_PREVIOUS:
-//                    serviceIntent.putExtra("ActionName", intent.getAction());
                     serviceIntent.putExtra("ActionName", "Previous");
                     context.startService(serviceIntent);
                     break;

@@ -443,6 +443,19 @@ public class PlayerActivity extends AppCompatActivity
         repeat_btn = findViewById(R.id.repeat);
         play_pause_btn = findViewById(R.id.play_pause);
         seekBar = findViewById(R.id.seekBar);
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     //Giải thích MetadataRetriever: Truy xuất info từ các tệp multimedia: music, video,... Truy xuất nội dung của tệp: Title, Artist, Album,...
