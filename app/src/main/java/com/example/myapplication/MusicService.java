@@ -215,7 +215,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         //mediaSessionCompat didn't work
         if (mediaSessionCompat == null) {
-            Log.e("PlayerActivity", "mediaSessionCompat is null");
+            Log.e("MusicService", "mediaSessionCompat is null");
             return;
         }
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
