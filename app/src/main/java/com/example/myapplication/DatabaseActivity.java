@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -25,8 +26,8 @@ public class DatabaseActivity extends AppCompatActivity {
     private EditText editTextTitle, editTextDescription, editTextPriority;
     private TextView textViewData;
 
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference notebookRef = db.collection("Notebook");
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final CollectionReference notebookRef = db.collection("Notebook");
 
     private DocumentSnapshot lastResult;
 
@@ -39,6 +40,8 @@ public class DatabaseActivity extends AppCompatActivity {
         editTextDescription = findViewById(R.id.edit_text_description);
         editTextPriority = findViewById(R.id.edit_text_priority);
         textViewData = findViewById(R.id.text_view_data);
+
+        FirebaseApp.initializeApp(this);
     }
 
     public void addNote(View v) {
@@ -60,10 +63,10 @@ public class DatabaseActivity extends AppCompatActivity {
     public void loadNotes(View v) {
         Query query;
         if (lastResult == null) {
-            query = notebookRef.orderBy("priorty")
+            query = notebookRef.orderBy("priority")
                     .limit(3);
         } else {
-            query = notebookRef.orderBy("priorty")
+            query = notebookRef.orderBy("priority")
                     .startAfter(lastResult)
                     .limit(3);
         }
@@ -72,7 +75,7 @@ public class DatabaseActivity extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        String data = "";
+                        StringBuilder data = new StringBuilder();
 
                         for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             Note note = documentSnapshot.toObject(Note.class);
@@ -83,16 +86,15 @@ public class DatabaseActivity extends AppCompatActivity {
                             String description = note.getDescription();
                             int priority = note.getPriority();
 
-                            data += "ID: " + documentId
-                                    + "\nTitle: " + title
-                                    + "\nDescription: " + description
-                                    + "\nPriority: " + priority
-                                    + "\n\n";
+                            data.append("ID: ").append(documentId).
+                                    append("\nTitle: ").append(title).
+                                    append("\nDescription: ").append(description).
+                                    append("\nPriority: ").append(priority).append("\n\n");
                         }
 
-                        if (queryDocumentSnapshots.size() > 0) {
-                            data += "_________\n\n";
-                            textViewData.append(data);
+                        if (!queryDocumentSnapshots.isEmpty()) {
+                            data.append("_________\n\n");
+                            textViewData.append(data.toString());
 
                             lastResult = queryDocumentSnapshots.getDocuments()
                                     .get(queryDocumentSnapshots.size() - 1);
