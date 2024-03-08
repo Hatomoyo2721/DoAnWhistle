@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -12,14 +13,18 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DatabaseActivity extends AppCompatActivity {
 
@@ -42,6 +47,41 @@ public class DatabaseActivity extends AppCompatActivity {
         textViewData = findViewById(R.id.text_view_data);
 
         FirebaseApp.initializeApp(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        notebookRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    return;
+                }
+
+                for (DocumentChange dc : Objects.requireNonNull(queryDocumentSnapshots != null ? queryDocumentSnapshots.getDocumentChanges() : null)) {
+                    DocumentSnapshot documentSnapshot = dc.getDocument();
+                    String id = documentSnapshot.getId();
+                    int oldIndext = dc.getOldIndex();
+                    int newIndext = dc.getNewIndex();
+
+                    switch (dc.getType()) {
+                        case ADDED:
+                            textViewData.append("\nAdded: " + id +
+                                    "\nOld Index: " + oldIndext +
+                                    "New Index: " + newIndext);
+                        case MODIFIED:
+                            textViewData.append("\nModified: " + id +
+                                    "\nOld Index: " + oldIndext +
+                                    "New Index: " + newIndext);
+                        case REMOVED:
+                            textViewData.append("\nRemoved: " + id +
+                                    "\nOld Index: " + oldIndext +
+                                    " New Index: " + newIndext);
+                    }
+                }
+            }
+        });
     }
 
     public void addNote(View v) {
@@ -86,14 +126,14 @@ public class DatabaseActivity extends AppCompatActivity {
                             String description = note.getDescription();
                             int priority = note.getPriority();
 
-                            data.append("ID: ").append(documentId).
-                                    append("\nTitle: ").append(title).
-                                    append("\nDescription: ").append(description).
-                                    append("\nPriority: ").append(priority).append("\n\n");
+//                            data.append("ID: ").append(documentId).
+//                                    append("\nTitle: ").append(title).
+//                                    append("\nDescription: ").append(description).
+//                                    append("\nPriority: ").append(priority).append("\n\n");
                         }
 
                         if (!queryDocumentSnapshots.isEmpty()) {
-                            data.append("_________\n\n");
+//                            data.append("_________\n\n");
                             textViewData.append(data.toString());
 
                             lastResult = queryDocumentSnapshots.getDocuments()
