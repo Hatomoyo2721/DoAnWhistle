@@ -1,40 +1,43 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class DatabaseActivity extends AppCompatActivity {
 
-    private EditText editTextTitle, editTextDescription, editTextPriority;
+    private EditText editTextTitle, editTextDescription, editTextPriority, editTextTags;
     private TextView textViewData;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final CollectionReference notebookRef = db.collection("Notebook");
 
-    private DocumentSnapshot lastResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,44 +47,18 @@ public class DatabaseActivity extends AppCompatActivity {
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextDescription = findViewById(R.id.edit_text_description);
         editTextPriority = findViewById(R.id.edit_text_priority);
+        editTextTags = findViewById(R.id.edit_text_tags);
         textViewData = findViewById(R.id.text_view_data);
 
         FirebaseApp.initializeApp(this);
+        updateArray();
+
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        notebookRef.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    return;
-                }
-
-                for (DocumentChange dc : Objects.requireNonNull(queryDocumentSnapshots != null ? queryDocumentSnapshots.getDocumentChanges() : null)) {
-                    DocumentSnapshot documentSnapshot = dc.getDocument();
-                    String id = documentSnapshot.getId();
-                    int oldIndext = dc.getOldIndex();
-                    int newIndext = dc.getNewIndex();
-
-                    switch (dc.getType()) {
-                        case ADDED:
-                            textViewData.append("\nAdded: " + id +
-                                    "\nOld Index: " + oldIndext +
-                                    "New Index: " + newIndext);
-                        case MODIFIED:
-                            textViewData.append("\nModified: " + id +
-                                    "\nOld Index: " + oldIndext +
-                                    "New Index: " + newIndext);
-                        case REMOVED:
-                            textViewData.append("\nRemoved: " + id +
-                                    "\nOld Index: " + oldIndext +
-                                    " New Index: " + newIndext);
-                    }
-                }
-            }
-        });
+    private void updateArray() {
+        notebookRef.document("6o9AjuZQfgSHdtdZtL9q")
+                //.update("tags", FieldValue.arrayUnion("new tag"));
+                .update("tags", FieldValue.arrayRemove("new tag"));
     }
 
     public void addNote(View v) {
@@ -94,24 +71,18 @@ public class DatabaseActivity extends AppCompatActivity {
 
         int priority = Integer.parseInt(editTextPriority.getText().toString());
 
-        Note note = new Note(title, description, priority);
+        String tagInput = editTextTags.getText().toString();
+        String[] tagArray = tagInput.split("\\s*,\\s*");
+        List<String> tags = Arrays.asList(tagArray);
+
+        Note note = new Note(title, description, priority, tags);
 
         notebookRef.add(note);
 
     }
 
     public void loadNotes(View v) {
-        Query query;
-        if (lastResult == null) {
-            query = notebookRef.orderBy("priority")
-                    .limit(3);
-        } else {
-            query = notebookRef.orderBy("priority")
-                    .startAfter(lastResult)
-                    .limit(3);
-        }
-
-        query.get()
+        notebookRef.whereArrayContains("tags", "tag5").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -122,23 +93,16 @@ public class DatabaseActivity extends AppCompatActivity {
                             note.setDocumentId(documentSnapshot.getId());
 
                             String documentId = note.getDocumentId();
-                            String title = note.getTitle();
-                            String description = note.getDescription();
-                            int priority = note.getPriority();
 
-//                            data.append("ID: ").append(documentId).
-//                                    append("\nTitle: ").append(title).
-//                                    append("\nDescription: ").append(description).
-//                                    append("\nPriority: ").append(priority).append("\n\n");
+                            data.append("ID: ").append(documentId);
+
+                            for (String tag : note.getTags()) {
+                                data.append("\n-").append(tag);
+                            }
+
+                            data.append("\n\n");
                         }
-
-                        if (!queryDocumentSnapshots.isEmpty()) {
-//                            data.append("_________\n\n");
-                            textViewData.append(data.toString());
-
-                            lastResult = queryDocumentSnapshots.getDocuments()
-                                    .get(queryDocumentSnapshots.size() - 1);
-                        }
+                        textViewData.setText(data.toString());
                     }
                 });
     }
