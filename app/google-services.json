@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "932698077985",
-    "project_id": "music-app-116af",
-    "storage_bucket": "music-app-116af.appspot.com"
+    "project_number": "441757766891",
+    "project_id": "doan-dc3ff",
+    "storage_bucket": "doan-dc3ff.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:932698077985:android:f3d030ae5622ad51c91c60",
+        "mobilesdk_app_id": "1:441757766891:android:346a73a61b8c1bfcbc5aae",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDHbBdCnVevxoLyiai-1EzAPBfQpS54CeM"
+          "current_key": "AIzaSyA8pJBb7w024zbvgQRa-cpyUt9e_MNVbs8"
         }
       ],
       "services": {
