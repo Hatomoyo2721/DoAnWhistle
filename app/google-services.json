@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "441757766891",
-    "project_id": "doan-dc3ff",
-    "storage_bucket": "doan-dc3ff.appspot.com"
+    "project_number": "478540625418",
+    "firebase_url": "https://do-an-d9b6e-default-rtdb.firebaseio.com",
+    "project_id": "do-an-d9b6e",
+    "storage_bucket": "do-an-d9b6e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:441757766891:android:346a73a61b8c1bfcbc5aae",
+        "mobilesdk_app_id": "1:478540625418:android:a42711b1cc4f84cad251f3",
         "android_client_info": {
           "package_name": "com.example.myapplication"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA8pJBb7w024zbvgQRa-cpyUt9e_MNVbs8"
+          "current_key": "AIzaSyBvrbBUrFzdMPewqAqiLLKWsltE49jNxV0"
         }
       ],
       "services": {

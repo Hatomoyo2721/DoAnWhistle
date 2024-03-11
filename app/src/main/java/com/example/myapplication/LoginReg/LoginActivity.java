@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -47,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!validateUsername() | !validatePassword()) {
-
+                    Toast.makeText(LoginActivity.this, "Please enter valid crendentials", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     checkUser();
@@ -77,9 +78,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public Boolean validatePassword() {
-        String username = loginPassword.getText().toString();
-        if (username.isEmpty()) {
-            loginPassword.setError("Username cannot be empty");
+        String password = loginPassword.getText().toString();
+        if (password.isEmpty()) {
+            loginPassword.setError("Password cannot be empty");
             return false;
         }
         else {

@@ -30,12 +30,14 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         regName = findViewById(R.id.inputName);
         regEmail = findViewById(R.id.inputEmail);
         regUsername = findViewById(R.id.inputUsername);
         regPassword = findViewById(R.id.inputPassword);
         confirmPassword = findViewById(R.id.inputConfirmPassword);
         loginView = findViewById(R.id.alreadyHaveAccount);
+        btnResgiter = findViewById(R.id.btnRegister);
 
         btnResgiter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,14 +45,19 @@ public class RegisterActivity extends AppCompatActivity {
                 database = FirebaseDatabase.getInstance();
                 reference = database.getReference("users");
 
-                String name = regName.getText().toString();
-                String email = regEmail.getText().toString();
-                String username = regUsername.getText().toString();
-                String password = regPassword.getText().toString();
-                String confirmPass = confirmPassword.getText().toString();
+                String name = regName.getText().toString().trim();
+                String email = regEmail.getText().toString().trim();
+                String username = regUsername.getText().toString().trim();
+                String password = regPassword.getText().toString().trim();
+                String confirmPass = confirmPassword.getText().toString().trim();
 
-                HelperClass helperClass = new HelperClass(name, email, username, password);
-                reference.child(name).setValue(helperClass);
+                if (!password.equals(confirmPass)) {
+                    Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
+                    return; // Stop the registration process
+                }
+
+                HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
+                reference.child(username).setValue(helperClass);
 
                 Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(RegisterActivity.this, Log.class);
