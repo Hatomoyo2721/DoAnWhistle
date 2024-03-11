@@ -47,6 +47,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public static final String MUSIC_FILE = "STORED_MUSIC";
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
+    public static final String ACTION_PLAY_PAUSE_MS = "com.example.myapplication.ACTION_PLAY_PAUSE";
+    public static final String ACTION_NEXT_MS = "com.example.myapplication.ACTION_NEXT";
+    public static final String ACTION_PREVIOUS_MS = "com.example.myapplication.ACTION_PREVIOUS";
 
     @Override
     public void onCreate() {
@@ -57,7 +60,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        Log.e("Bind", "Method");
         return myBinder;
     }
 
@@ -167,11 +169,26 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onCompletion(MediaPlayer mp) {
         if (actionPlaying != null) {
             actionPlaying.nextBtnClicked();
-            if (mediaPlayer != null) {
+//            if (mediaPlayer != null) {
+//                createMediaPlayer(position);
+//                mediaPlayer.start();
+//                OnCompleted();
+//            }
+            if (position < musicFiles.size()) {
                 createMediaPlayer(position);
                 mediaPlayer.start();
                 OnCompleted();
+                notifySongChanged();
             }
+            else {
+                stopSelf();
+            }
+        }
+    }
+
+    private void notifySongChanged() {
+        if (actionPlaying != null) {
+            actionPlaying.onSongChanged();
         }
     }
 
@@ -256,19 +273,27 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     void playPauseBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.playPauseBtnClicked();
+            sendBroadcast(ACTION_PLAY_PAUSE_MS);
         }
     }
 
     void previousBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.prevBtnClicked();
+            sendBroadcast(ACTION_PREVIOUS_MS);
         }
     }
 
     void nextBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.nextBtnClicked();
+            sendBroadcast(ACTION_NEXT_MS);
         }
+    }
+
+    private void sendBroadcast(String action) {
+        Intent intent = new Intent(action);
+        sendBroadcast(intent);
     }
 }
 

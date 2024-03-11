@@ -33,6 +33,7 @@ import com.google.android.material.tabs.TabLayout;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Currency;
+import java.util.Objects;
 
 import android.app.SearchManager;
 import android.widget.SearchView;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public static ArrayList<MusicFiles> musicFiles;
     static boolean shuffleBoolean = false, repeatBoolean = false;
     static ArrayList<MusicFiles> albums = new ArrayList<>();
-    private String MY_SORT_PREF = "SortOrder";
+    private final String MY_SORT_PREF = "SortOrder";
     public static final String MUSIC_FILE_LAST_PLAYED = "LAST_PLAYED";
     public static final String MUSIC_FILE = "STORED_MUSIC";
     public static boolean SHOW_MINI_PLAYER = false;
@@ -63,10 +64,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void permission() { //Permission provide file, photos, music,...
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                //(Có dòng import android.Manifest mới xài được WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-
-//            Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
 
             ActivityCompat.requestPermissions(MainActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -86,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 //            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Do what ever you want permission related
-//                Toast.makeText(this, "Quyền đã được cấp", Toast.LENGTH_LONG).show();
                 musicFiles = getSongs(this);
                 initViewPager();
             }
@@ -94,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 ActivityCompat.requestPermissions(MainActivity.this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         REQUEST_CODE);
-//                Toast.makeText(this, "Quyền bị từ chối", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -114,15 +110,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             if (tab != null) {
                 tab.setCustomView(R.layout.custom_tab_layout);
-                TextView tabTextView = tab.getCustomView().findViewById(R.id.customTab);
+                TextView tabTextView = Objects.requireNonNull(tab.getCustomView()).findViewById(R.id.customTab);
                 tabTextView.setText(tab.getText());
             }
         }
     }
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter { //Quản lý fragments và titles
-        private ArrayList<Fragment> fragments;
-        private ArrayList<String> titles;
+        private final ArrayList<Fragment> fragments;
+        private final ArrayList<String> titles;
 
         public ViewPagerAdapter(@NonNull FragmentManager fm) {
             super(fm);
@@ -228,7 +224,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         getMenuInflater().inflate(R.menu.search, menu);
         MenuItem menuItem = menu.findItem(R.id.search_option);
         SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setOnQueryTextListener(this);
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(this);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -255,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     //27 - 02 - 2024
     //Create menu for sorting songs
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         SharedPreferences.Editor editor = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE).edit();

@@ -22,7 +22,7 @@ public class ApplicationClass extends Application {
     }
 
     private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             NotificationChannel channel1 =
                     new NotificationChannel(CHANNEL_ID_1,
                             "Channel 1", NotificationManager.IMPORTANCE_HIGH);
@@ -31,7 +31,7 @@ public class ApplicationClass extends Application {
             NotificationChannel channel2 =
                     new NotificationChannel(CHANNEL_ID_2,
                             "Channel 2", NotificationManager.IMPORTANCE_HIGH);
-            channel1.setDescription("Channel 2 Desc..");
+            channel2.setDescription("Channel 2 Desc..");
 
             NotificationManager notificationManager =
                     getSystemService(NotificationManager.class);

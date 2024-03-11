@@ -58,9 +58,10 @@
         
         <ImageView
             android:id="@+id/cover_art"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:scaleType="centerCrop"
+            android:layout_centerInParent="true"/>
         
         <ImageView
             android:id="@+id/imageViewGredient"

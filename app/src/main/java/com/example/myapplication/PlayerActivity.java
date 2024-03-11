@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.palette.graphics.Palette;
 
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -41,6 +42,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -54,8 +56,8 @@ import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
 import java.security.KeyStore;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Random;
-
 
 
 public class PlayerActivity extends AppCompatActivity
@@ -69,18 +71,45 @@ public class PlayerActivity extends AppCompatActivity
     public static Uri uri;
     //public static MediaPlayer mediaPlayer; //Để phát nhạc và sử dụng các thao tác liên quan tới phát nhạc
     public static ArrayList<MusicFiles> listSongs = new ArrayList<>();
-    private Handler handler = new Handler(); //Xử lý cập nhật giao diện người dùng
+    private final Handler handler = new Handler(); //Xử lý cập nhật giao diện người dùng
     private Thread playThread, prevThread, nextThread; //Xử lý sự kiện: Play/Pause, Previous, Next
     MusicService musicService;
 
-
     //Thiết lập giao diện người dùng và gọi các phương thức khởi tạo khác
+    private void initViews() {
+        song_name = findViewById(R.id.song_name);
+        artist_name = findViewById(R.id.song_artist);
+        duration_played = findViewById(R.id.duration_play);
+        duration_finished = findViewById(R.id.duration_finish);
+        cover_art = findViewById(R.id.cover_art);
+        next_btn = findViewById(R.id.next);
+        prev_btn = findViewById(R.id.previous);
+        back_btn = findViewById(R.id.back_btn);
+        shuffle_btn = findViewById(R.id.shuffle);
+        repeat_btn = findViewById(R.id.repeat);
+        play_pause_btn = findViewById(R.id.play_pause);
+        seekBar = findViewById(R.id.seekBar);
+
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setFullScreen();
         setContentView(R.layout.activity_player);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
         initViews(); //Ánh xạ
         getIntentMethod();
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -187,10 +216,12 @@ public class PlayerActivity extends AppCompatActivity
                 if (shuffleBoolean && !repeatBoolean) {
                     position = getRandom(listSongs.size() - 1);
                 } else if (!shuffleBoolean && !repeatBoolean) {
-                    position = ((position - 1) < 0 ? (listSongs.size() - 1) : (position - 1));
+                    position = position > 0 ? position - 1 : listSongs.size() - 1;
+                } else if (repeatBoolean && prev_btn.isClickable()) {
+                    position = getRandom(listSongs.size() - 1);
+                } else if (repeatBoolean) {
+                    position = position;
                 }
-
-                position = Math.max(0, Math.min(position, listSongs.size() - 1)); // 5 / 3 / 2024
 
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
@@ -274,10 +305,8 @@ public class PlayerActivity extends AppCompatActivity
                 if (shuffleBoolean && !repeatBoolean) {
                     position = getRandom(listSongs.size() - 1);
                 } else if (!shuffleBoolean && !repeatBoolean) {
-                    position = ((position + 1) % listSongs.size());
+                    position = (position + 1) % listSongs.size();
                 }
-                //else position will be position...
-                position = Math.max(0, Math.min(position, listSongs.size() - 1)); // 5 / 3 2024
 
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
@@ -296,10 +325,7 @@ public class PlayerActivity extends AppCompatActivity
                         handler.postDelayed(this, 1000);
                     }
                 });
-                musicService.OnCompleted();
-                musicService.showNotification(R.drawable.baseline_pause);
-                play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
-                musicService.start();
+
             } else {
                 musicService.stop();
                 musicService.release();
@@ -355,6 +381,8 @@ public class PlayerActivity extends AppCompatActivity
     public void playPauseBtnClicked() {
         try {
             if (musicService.isPlaying()) {
+                musicService.pause();
+
                 play_pause_btn.setImageResource(R.drawable.baseline_play_arrow);
                 musicService.showNotification(R.drawable.baseline_play_arrow);
                 musicService.pause();
@@ -413,49 +441,21 @@ public class PlayerActivity extends AppCompatActivity
     //Trước 25 - 02 - 2024: Lấy info vị trí bài hát và khởi tạo các thành phần khác
     //25 - 02 - 2024: Hàm này mới thêm "sender" để chạy được nhạc trong Albums
     private void getIntentMethod() {
-            position = getIntent().getIntExtra("position", -1);
-            String sender = getIntent().getStringExtra("sender");
-            if (sender != null && sender.equals("albumDetail")) {
-                listSongs = album_Files;
-            } else {
-                listSongs = music_Files; //Change a bit here musicFiles (MainActivity) -> music_Files (MusicAdapter)
-            }
+        position = getIntent().getIntExtra("position", -1);
+        String sender = getIntent().getStringExtra("sender");
+        if (sender != null && sender.equals("albumDetail")) {
+            listSongs = album_Files;
+        } else {
+            listSongs = music_Files; //Change a bit here musicFiles (MainActivity) -> music_Files (MusicAdapter)
+        }
 
-            if (listSongs != null) {
-                play_pause_btn.setImageResource(R.drawable.baseline_pause);
-                uri = Uri.parse(listSongs.get(position).getPath());
-            }
-            Intent i = new Intent(this, MusicService.class);
-            i.putExtra("servicePosition", position);
-            startService(i);
-    }
-
-    private void initViews() {
-        song_name = findViewById(R.id.song_name);
-        artist_name = findViewById(R.id.song_artist);
-        duration_played = findViewById(R.id.duration_play);
-        duration_finished = findViewById(R.id.duration_finish);
-        cover_art = findViewById(R.id.cover_art);
-        next_btn = findViewById(R.id.next);
-        prev_btn = findViewById(R.id.previous);
-        back_btn = findViewById(R.id.back_btn);
-        shuffle_btn = findViewById(R.id.shuffle);
-        repeat_btn = findViewById(R.id.repeat);
-        play_pause_btn = findViewById(R.id.play_pause);
-        seekBar = findViewById(R.id.seekBar);
-
-        back_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+        if (listSongs != null) {
+            play_pause_btn.setImageResource(R.drawable.baseline_pause);
+            uri = Uri.parse(listSongs.get(position).getPath());
+        }
+        Intent i = new Intent(this, MusicService.class);
+        i.putExtra("servicePosition", position);
+        startService(i);
     }
 
     //Giải thích MetadataRetriever: Truy xuất info từ các tệp multimedia: music, video,... Truy xuất nội dung của tệp: Title, Artist, Album,...
@@ -472,7 +472,7 @@ public class PlayerActivity extends AppCompatActivity
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(@Nullable Palette palette) {
-                    Palette.Swatch swatch = palette.getDominantSwatch();
+                    Palette.Swatch swatch = palette != null ? palette.getDominantSwatch() : null;
                     if (swatch != null) {
                         ImageView gredient = findViewById(R.id.imageViewGredient);
                         RelativeLayout mContainer = findViewById(R.id.container);
@@ -529,6 +529,7 @@ public class PlayerActivity extends AppCompatActivity
     public void imageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap) {
         Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
         Animation animationIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+
         animationOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -582,8 +583,7 @@ public class PlayerActivity extends AppCompatActivity
             artist_name.setText(listSongs.get(position).getArtist());
             musicService.OnCompleted();
             musicService.showNotification(R.drawable.baseline_pause);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -594,4 +594,15 @@ public class PlayerActivity extends AppCompatActivity
         musicService = null;
     }
 
+    @Override
+    public void onSongChanged() {
+        if (musicService != null) {
+
+            int newPosition = musicService.getCurrentPosition();
+            Uri newUri = Uri.parse(listSongs.get(newPosition).getPath());
+
+            song_name.setText(listSongs.get(newPosition).getTitle());
+            artist_name.setText(listSongs.get(newPosition).getArtist());
+        }
+    }
 }

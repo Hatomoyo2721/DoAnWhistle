@@ -11,7 +11,9 @@ import static com.example.myapplication.MainActivity.musicFiles;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -141,34 +143,31 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            if (SHOW_MINI_PLAYER) {
-                if (PATH_TO_FRAG != null) {
-                    byte[] art = getAlbumArt(PATH_TO_FRAG);
-                    if (art != null) {
-                        Glide.with(getContext()).load(art)
-                                .into(albumArt);
-                    }
-                    else {
-                        Glide.with(getContext()).load(R.drawable.question_mark)
-                                .into(albumArt);
-                    }
-                    songName.setText(SONG_NAME_TO_FRAG);
-                    artist.setText(ARTIST_TO_FRAG);
-                    Intent intent = new Intent(getContext(), MusicService.class);
-                    if (getContext() != null) {
-                        getContext().bindService(intent, this, BIND_AUTO_CREATE);
+        @Override
+        public void onResume() {
+            super.onResume();
+            try {
+                if (SHOW_MINI_PLAYER) {
+                    if (PATH_TO_FRAG != null) {
+                        byte[] art = getAlbumArt(PATH_TO_FRAG);
+                        if (art != null) {
+                            Glide.with(this).load(art)
+                                    .into(albumArt);
+                        } else {
+                            Glide.with(this).load(R.drawable.question_mark)
+                                    .into(albumArt);
+                        }
+                        songName.setText(SONG_NAME_TO_FRAG);
+                        artist.setText(ARTIST_TO_FRAG);
+                        Intent intent = new Intent(getContext(), MusicService.class);
+                        if (getContext() != null)
+                            getContext().bindService(intent, this, BIND_AUTO_CREATE);
                     }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onPause() {
