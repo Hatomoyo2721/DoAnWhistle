@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     loginUsername.setError(null);
                     String passwordFromDB = dataSnapshot.child(userUsername).child("password").getValue(String.class);
 
-                    if (!Objects.equals(passwordFromDB, userPassword)) {
+                    if (passwordFromDB.equals(userPassword)) {
                         loginUsername.setError(null);
                         Intent i = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i);

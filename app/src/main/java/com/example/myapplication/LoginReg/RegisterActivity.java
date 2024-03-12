@@ -10,14 +10,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class RegisterActivity extends AppCompatActivity {
     EditText regName, regEmail, regUsername, regPassword, confirmPassword;
@@ -45,23 +49,58 @@ public class RegisterActivity extends AppCompatActivity {
                 database = FirebaseDatabase.getInstance();
                 reference = database.getReference("users");
 
-                String name = regName.getText().toString().trim();
-                String email = regEmail.getText().toString().trim();
-                String username = regUsername.getText().toString().trim();
-                String password = regPassword.getText().toString().trim();
-                String confirmPass = confirmPassword.getText().toString().trim();
+//                String name = regName.getText().toString().trim();
+//                String email = regEmail.getText().toString().trim();
+//                final String username = regUsername.getText().toString().trim();
+//                String password = regPassword.getText().toString().trim();
+//                String confirmPass = confirmPassword.getText().toString().trim();
+//
+//                if (!password.equals(confirmPass)) {
+//                    Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
+//                    return; // Stop the registration process
+//                }
+//
+//                HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
+//                reference.child(username).setValue(helperClass);
+//
+//                Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
+//                Intent i = new Intent(RegisterActivity.this, Log.class);
+//                startActivity(i);
 
-                if (!password.equals(confirmPass)) {
-                    Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
-                    return; // Stop the registration process
-                }
+                final String username = regUsername.getText().toString().trim();
 
-                HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
-                reference.child(username).setValue(helperClass);
+                DatabaseReference databaseReference = database.getReference("users");
+                databaseReference.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            Toast.makeText(RegisterActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                        } else {
+                            String name = regName.getText().toString().trim();
+                            String email = regEmail.getText().toString().trim();
+                            String password = regPassword.getText().toString().trim();
+                            String confirmPass = confirmPassword.getText().toString().trim();
 
-                Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(RegisterActivity.this, Log.class);
-                startActivity(i);
+                            if (!password.equals(confirmPass)) {
+                                Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
+                            reference.child(username).setValue(helperClass);
+
+                            Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(RegisterActivity.this, Log.class);
+                            startActivity(i);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
         });
 

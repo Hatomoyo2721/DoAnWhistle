@@ -82,6 +82,7 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
             musicService.nextBtnClicked();
             updateStoredMusicPreferences();
             updateMiniPlayerUI();
+
         }
     }
 
