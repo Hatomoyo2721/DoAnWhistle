@@ -15,11 +15,14 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.os.IBinder;
@@ -48,11 +51,28 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
     public static final String MUSIC_FILE = "STORED_MUSIC";
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
+    private BroadcastReceiver songChangeReceiver;
+    public static final String ACTION_SONG_CHANGED = "com.example.myapplication.SONG_CHANGED";
 
     public NowPlayingFragmentBottom() {
         // Required empty public constructor
     }
 
+    public class SongChangeBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(ACTION_SONG_CHANGED)) {
+                String songNameC = intent.getStringExtra(SONG_NAME);
+                String artistName = intent.getStringExtra(ARTIST_NAME);
+                String filePath = intent.getStringExtra(MUSIC_FILE);
+                // Update fragment UI with the received song details
+                artist.setText(artistName);
+                songName.setText(songNameC);
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,6 +80,10 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
                 container, false);
         intialViews();
         setClickListeners();
+
+        songChangeReceiver = new SongChangeBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(ACTION_SONG_CHANGED);
+        getContext().registerReceiver(songChangeReceiver, intentFilter, Context.RECEIVER_EXPORTED);
 
         return rootView;
     }
@@ -96,10 +120,10 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
     private void updateStoredMusicPreferences() {
         if (getActivity() != null) {
             SharedPreferences.Editor editor = getActivity().getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE).edit();
-                editor.putString(MUSIC_FILE, musicService.musicFiles.get(musicService.position).getPath());
-                editor.putString(ARTIST_NAME, musicService.musicFiles.get(musicService.position).getArtist());
-                editor.putString(SONG_NAME, musicService.musicFiles.get(musicService.position).getTitle());
-                editor.apply();
+            editor.putString(MUSIC_FILE, musicService.musicFiles.get(musicService.position).getPath());
+            editor.putString(ARTIST_NAME, musicService.musicFiles.get(musicService.position).getArtist());
+            editor.putString(SONG_NAME, musicService.musicFiles.get(musicService.position).getTitle());
+            editor.apply();
 
             SharedPreferences preferences = getActivity().getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE);
             String path = preferences.getString(MUSIC_FILE, null);
@@ -110,8 +134,7 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
                 PATH_TO_FRAG = path;
                 ARTIST_TO_FRAG = artistName;
                 SONG_NAME_TO_FRAG = song_name;
-            }
-            else {
+            } else {
                 SHOW_MINI_PLAYER = false;
                 PATH_TO_FRAG = null;
                 ARTIST_TO_FRAG = null;
@@ -144,31 +167,31 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         }
     }
 
-        @Override
-        public void onResume() {
-            super.onResume();
-            try {
-                if (SHOW_MINI_PLAYER) {
-                    if (PATH_TO_FRAG != null) {
-                        byte[] art = getAlbumArt(PATH_TO_FRAG);
-                        if (art != null) {
-                            Glide.with(this).load(art)
-                                    .into(albumArt);
-                        } else {
-                            Glide.with(this).load(R.drawable.question_mark)
-                                    .into(albumArt);
-                        }
-                        songName.setText(SONG_NAME_TO_FRAG);
-                        artist.setText(ARTIST_TO_FRAG);
-                        Intent intent = new Intent(getContext(), MusicService.class);
-                        if (getContext() != null)
-                            getContext().bindService(intent, this, BIND_AUTO_CREATE);
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            if (SHOW_MINI_PLAYER) {
+                if (PATH_TO_FRAG != null) {
+                    byte[] art = getAlbumArt(PATH_TO_FRAG);
+                    if (art != null) {
+                        Glide.with(this).load(art)
+                                .into(albumArt);
+                    } else {
+                        Glide.with(this).load(R.drawable.question_mark)
+                                .into(albumArt);
                     }
+                    songName.setText(SONG_NAME_TO_FRAG);
+                    artist.setText(ARTIST_TO_FRAG);
+                    Intent intent = new Intent(getContext(), MusicService.class);
+                    if (getContext() != null)
+                        getContext().bindService(intent, this, BIND_AUTO_CREATE);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
 
     @Override
     public void onPause() {
@@ -190,8 +213,7 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
             }
             return null;
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }

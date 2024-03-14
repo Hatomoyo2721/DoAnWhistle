@@ -273,27 +273,33 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     void playPauseBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.playPauseBtnClicked();
-            sendBroadcast(ACTION_PLAY_PAUSE_MS);
+            sendBroadCast(String.valueOf(new Intent(ACTION_PLAY_PAUSE_MS)));
         }
     }
 
     void previousBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.prevBtnClicked();
-            sendBroadcast(ACTION_PREVIOUS_MS);
+            sendBroadCast(String.valueOf(new Intent(ACTION_PREVIOUS_MS)));
         }
     }
 
     void nextBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.nextBtnClicked();
-            sendBroadcast(ACTION_NEXT_MS);
+            sendBroadCast(String.valueOf(new Intent(ACTION_NEXT_MS)));
         }
     }
 
-    private void sendBroadcast(String action) {
+    private void sendBroadCast(String action) {
         Intent intent = new Intent(action);
         sendBroadcast(intent);
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        stopSelf();
     }
 }
 

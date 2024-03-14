@@ -74,6 +74,7 @@ public class PlayerActivity extends AppCompatActivity
     private final Handler handler = new Handler(); //Xử lý cập nhật giao diện người dùng
     private Thread playThread, prevThread, nextThread; //Xử lý sự kiện: Play/Pause, Previous, Next
     MusicService musicService;
+    ServiceConnection serviceConnection;
 
     //Thiết lập giao diện người dùng và gọi các phương thức khởi tạo khác
     private void initViews() {
@@ -604,5 +605,11 @@ public class PlayerActivity extends AppCompatActivity
             song_name.setText(listSongs.get(newPosition).getTitle());
             artist_name.setText(listSongs.get(newPosition).getArtist());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, MusicService.class));
     }
 }

@@ -73,6 +73,7 @@
                 <action android:name="PLAY" />
             </intent-filter>
         </receiver>
+        <receiver android:name="com.example.myapplication.NowPlayingFragmentBottom" />
     </application>
 
 </manifest>
