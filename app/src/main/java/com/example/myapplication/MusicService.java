@@ -11,7 +11,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,23 +57,37 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onCreate() {
         super.onCreate();
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
+
+        ServiceConnection serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return myBinder;
+//        return myBinder;
+        return new MyBinder();
     }
 
     //1 activity connect to services
     public class MyBinder extends Binder {
-        MusicService getService() {
+        public MusicService getService() {
             return MusicService.this;
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         int myPosition = intent.getIntExtra("servicePosition", -1);
         if (myPosition != -1) {
             playMedia(myPosition);
@@ -95,6 +111,15 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             }
         }
         return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
     }
 
     private void playMedia(int StartPosition) {
