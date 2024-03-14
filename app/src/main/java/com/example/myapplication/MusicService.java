@@ -73,9 +73,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-//        return myBinder;
-        return new MyBinder();
+    public IBinder onBind(Intent intent) { return myBinder;
     }
 
     //1 activity connect to services
@@ -88,9 +86,16 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if (intent == null) {
+            Log.w("MusicService", "onStartCommand: Intent is null");
+            return START_NOT_STICKY;
+        }
+
         int myPosition = intent.getIntExtra("servicePosition", -1);
         if (myPosition != -1) {
-            playMedia(myPosition);
+            position = myPosition;
+            playMedia(position);
+            return START_NOT_STICKY;
         }
 
         String actionName = intent.getStringExtra("ActionName");
@@ -128,14 +133,19 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
-            if (musicFiles != null) {
-                createMediaPlayer(position);
+        }
+
+        if (musicFiles != null && position < musicFiles.size()) {
+            createMediaPlayer(position);
+            if (mediaPlayer != null) {
                 mediaPlayer.start();
+            }
+            else {
+                Log.w("MusicService", "playMedia: mediaPlayer is null after creation");
             }
         }
         else {
-            createMediaPlayer(position);
-            mediaPlayer.start();
+            Log.e("MusicService", "musicFiles is empty or position is invalid");
         }
     }
 
@@ -173,15 +183,20 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     void createMediaPlayer(int positionInner) {
         position = positionInner;
-        uri = Uri.parse(musicFiles.get(position).getPath());
+        if (musicFiles != null && position < musicFiles.size()) {
+            uri = Uri.parse(musicFiles.get(position).getPath());
 
-        SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE).edit();
-        editor.putString(MUSIC_FILE, uri.toString());
-        editor.putString(ARTIST_NAME, musicFiles.get(position).getArtist());
-        editor.putString(SONG_NAME, musicFiles.get(position).getTitle());
-        editor.apply();
+            SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED, MODE_PRIVATE).edit();
+            editor.putString(MUSIC_FILE, uri.toString());
+            editor.putString(ARTIST_NAME, musicFiles.get(position).getArtist());
+            editor.putString(SONG_NAME, musicFiles.get(position).getTitle());
+            editor.apply();
 
-        mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+            mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
+        }
+        else {
+            Log.e("MusicService", "musicFiles is empty or position is invalid");
+        }
     }
 
     void OnCompleted() {

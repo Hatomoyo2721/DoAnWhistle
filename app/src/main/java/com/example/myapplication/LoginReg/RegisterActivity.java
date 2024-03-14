@@ -85,6 +85,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+                            else if (password.length() <= 7)
+                            {
+                                Toast.makeText(RegisterActivity.this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
 
                             HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
                             reference.child(username).setValue(helperClass);

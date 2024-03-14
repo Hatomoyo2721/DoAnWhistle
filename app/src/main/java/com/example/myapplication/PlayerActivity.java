@@ -36,6 +36,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -612,4 +613,5 @@ public class PlayerActivity extends AppCompatActivity
         super.onDestroy();
         stopService(new Intent(this, MusicService.class));
     }
+
 }
