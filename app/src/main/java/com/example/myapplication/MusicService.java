@@ -22,6 +22,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.util.AtomicFile;
 import android.util.Log;
@@ -57,23 +58,12 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public void onCreate() {
         super.onCreate();
         mediaSessionCompat = new MediaSessionCompat(getBaseContext(), "My Audio");
-
-        ServiceConnection serviceConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
     }
 
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) { return myBinder;
+    public IBinder onBind(Intent intent) {
+        return myBinder;
     }
 
     //1 activity connect to services
@@ -139,12 +129,10 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             createMediaPlayer(position);
             if (mediaPlayer != null) {
                 mediaPlayer.start();
-            }
-            else {
+            } else {
                 Log.w("MusicService", "playMedia: mediaPlayer is null after creation");
             }
-        }
-        else {
+        } else {
             Log.e("MusicService", "musicFiles is empty or position is invalid");
         }
     }
@@ -154,7 +142,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     boolean isPlaying() {
-        return  mediaPlayer.isPlaying();
+        return mediaPlayer.isPlaying();
     }
 
     void stop() {
@@ -193,8 +181,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             editor.apply();
 
             mediaPlayer = MediaPlayer.create(getBaseContext(), uri);
-        }
-        else {
+        } else {
             Log.e("MusicService", "musicFiles is empty or position is invalid");
         }
     }
@@ -219,8 +206,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                 mediaPlayer.start();
                 OnCompleted();
                 notifySongChanged();
-            }
-            else {
+            } else {
                 stopSelf();
             }
         }
@@ -265,8 +251,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         Bitmap thumb = null;
         if (picture != null) {
             thumb = BitmapFactory.decodeByteArray(picture, 0, picture.length);
-        }
-        else {
+        } else {
             thumb = BitmapFactory.decodeResource(getResources(), R.drawable.question_mark);
         }
 

@@ -400,8 +400,8 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
             } else {
-                musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setImageResource(R.drawable.baseline_pause);
+                musicService.showNotification(R.drawable.baseline_pause);
                 musicService.start();
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -599,19 +599,9 @@ public class PlayerActivity extends AppCompatActivity
     @Override
     public void onSongChanged() {
         if (musicService != null) {
-
             int newPosition = musicService.getCurrentPosition();
-            Uri newUri = Uri.parse(listSongs.get(newPosition).getPath());
-
             song_name.setText(listSongs.get(newPosition).getTitle());
             artist_name.setText(listSongs.get(newPosition).getArtist());
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(new Intent(this, MusicService.class));
-    }
-
 }
