@@ -3,7 +3,7 @@ package com.example.myapplication;
 import static com.example.myapplication.ApplicationClass.ACTION_NEXT;
 import static com.example.myapplication.ApplicationClass.ACTION_PLAY;
 import static com.example.myapplication.ApplicationClass.ACTION_PREVIOUS;
-import static com.example.myapplication.ApplicationClass.CHANNEL_ID_2;
+import static com.example.myapplication.ApplicationClass.CHANNEL_ID;
 import static com.example.myapplication.PlayerActivity.listSongs;
 
 import android.annotation.SuppressLint;
@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import java.io.IOException;
 import java.security.Provider;
@@ -222,7 +223,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         this.actionPlaying = actionPlaying;
     }
 
-    @SuppressLint({"NotificationId0"})
+    @SuppressLint({"NotificationId0", "MissingPermission"})
     void showNotification(int playPauseBtn) throws IOException {
 
         Intent intent = new Intent(this, PlayerActivity.class);
@@ -255,26 +256,24 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             thumb = BitmapFactory.decodeResource(getResources(), R.drawable.question_mark);
         }
 
-        //mediaSessionCompat didn't work
-        if (mediaSessionCompat == null) {
-            Log.e("MusicService", "mediaSessionCompat is null");
-            return;
-        }
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID_2)
-                .setSmallIcon(playPauseBtn)
-                .setLargeIcon(thumb)
+        mediaSessionCompat = new MediaSessionCompat(this, "tag");
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.baseline_small_music)
                 .setContentTitle(musicFiles.get(position).getTitle())
                 .setContentText(musicFiles.get(position).getArtist())
+                .setLargeIcon(thumb)
                 .addAction(R.drawable.baseline_skip_previous, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.baseline_skip_next, "Next", nextPending)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(1)
                         .setMediaSession(mediaSessionCompat.getSessionToken()))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setOnlyAlertOnce(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .build();
-        startForeground(NOTIFICATION_ID, notification);
+
+        NotificationManagerCompat mangerCompat = NotificationManagerCompat.from(this);
+        mangerCompat.notify(NOTIFICATION_ID, notification);
+//        startForeground(NOTIFICATION_ID, notification);
     }
 
     private byte[] getAlbumArt(String s) throws IOException {
