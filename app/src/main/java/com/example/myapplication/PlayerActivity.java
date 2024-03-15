@@ -1,25 +1,14 @@
 package com.example.myapplication;
 
 import static com.example.myapplication.AlbumDetailsAdapter.album_Files;
-import static com.example.myapplication.ApplicationClass.ACTION_NEXT;
-import static com.example.myapplication.ApplicationClass.ACTION_PLAY;
-import static com.example.myapplication.ApplicationClass.ACTION_PREVIOUS;
-import static com.example.myapplication.ApplicationClass.CHANNEL_ID_2;
-import static com.example.myapplication.MainActivity.musicFiles;
 import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
 import static com.example.myapplication.MusicAdapter.music_Files;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 import androidx.palette.graphics.Palette;
 
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -28,27 +17,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Image;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -219,10 +201,8 @@ public class PlayerActivity extends AppCompatActivity
                     position = getRandom(listSongs.size() - 1);
                 } else if (!shuffleBoolean && !repeatBoolean) {
                     position = position > 0 ? position - 1 : listSongs.size() - 1;
-                } else if (repeatBoolean && prev_btn.isClickable()) {
+                } else if (prev_btn.isClickable()) {
                     position = getRandom(listSongs.size() - 1);
-                } else if (repeatBoolean) {
-                    position = position;
                 }
 
                 uri = Uri.parse(listSongs.get(position).getPath());
@@ -308,6 +288,8 @@ public class PlayerActivity extends AppCompatActivity
                     position = getRandom(listSongs.size() - 1);
                 } else if (!shuffleBoolean && !repeatBoolean) {
                     position = (position + 1) % listSongs.size();
+                } else if (next_btn.isClickable()) {
+                    position = getRandom(listSongs.size() - 1);
                 }
 
                 uri = Uri.parse(listSongs.get(position).getPath());
@@ -327,6 +309,10 @@ public class PlayerActivity extends AppCompatActivity
                         handler.postDelayed(this, 1000);
                     }
                 });
+                musicService.OnCompleted();
+                musicService.showNotification(R.drawable.baseline_pause);
+                play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
+                musicService.start();
 
             } else {
                 musicService.stop();
