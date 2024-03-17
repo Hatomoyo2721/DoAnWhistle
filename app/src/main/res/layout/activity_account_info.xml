@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Name:"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image_user" />
 
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Your name"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/text_name_label"
         app:layout_constraintTop_toBottomOf="@id/image_user" />
 
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Email:"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/info_name" />
 
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="yourmail@gmail.com"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/text_name_label"
         app:layout_constraintTop_toBottomOf="@id/text_name_label" />
 
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Username:"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/info_email" />
 
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Your username"
-        android:textSize="18sp"
+        android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/text_username_label"
         app:layout_constraintTop_toBottomOf="@id/text_email_label" />
 
@@ -112,7 +112,7 @@
         android:id="@+id/update_account_btn_info"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:text="Update Account"
         android:background="@drawable/account_info_btn"
         app:layout_constraintTop_toBottomOf="@id/text_username_label"
@@ -121,13 +121,13 @@
         app:layout_constraintHorizontal_bias="0.5" />
 
     <Button
-        android:id="@+id/user_list"
+        android:id="@+id/user_list_info"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="User List"
         android:background="@drawable/account_info_btn"
-        app:layout_constraintTop_toBottomOf="@id/update_account_btn_info"
+        app:layout_constraintTop_toBottomOf="@id/logout_button_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
@@ -139,7 +139,7 @@
         android:layout_marginTop="20dp"
         android:text="Log Out"
         android:background="@drawable/account_info_btn"
-        app:layout_constraintTop_toBottomOf="@id/user_list"
+        app:layout_constraintTop_toBottomOf="@id/update_account_btn_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />

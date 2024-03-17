@@ -77,7 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 return;
                             }
 
-                            HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
+                            HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass, "customer");
                             reference.child(username).setValue(helperClass);
 
                             Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();

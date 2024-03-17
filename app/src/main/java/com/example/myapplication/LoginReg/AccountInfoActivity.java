@@ -23,7 +23,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import java.util.Objects;
 
 public class AccountInfoActivity extends AppCompatActivity {
-    Button btnLogout;
+    Button btnLogout, userListView;
+    HelperClass helperClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,8 @@ public class AccountInfoActivity extends AppCompatActivity {
 
         ImageView backBtn = findViewById(R.id.back_button_info);
         btnLogout = findViewById(R.id.logout_button_info);
+        userListView = findViewById(R.id.user_list_info);
+        helperClass = new HelperClass();
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,6 +55,13 @@ public class AccountInfoActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        String role = helperClass.getRole();
+        if (role != null && role.equals("admin")) {
+            userListView.setVisibility(View.VISIBLE);
+        } else {
+            userListView.setVisibility(View.GONE);
+        }
     }
 
     @Override
