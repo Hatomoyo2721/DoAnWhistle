@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public static String SONG_NAME_TO_FRAG =  null;
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
-    private boolean isInInfoAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
