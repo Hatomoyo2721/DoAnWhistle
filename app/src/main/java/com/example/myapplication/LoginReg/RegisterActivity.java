@@ -53,24 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
                 database = FirebaseDatabase.getInstance();
                 reference = database.getReference("users");
 
-//                String name = regName.getText().toString().trim();
-//                String email = regEmail.getText().toString().trim();
-//                final String username = regUsername.getText().toString().trim();
-//                String password = regPassword.getText().toString().trim();
-//                String confirmPass = confirmPassword.getText().toString().trim();
-//
-//                if (!password.equals(confirmPass)) {
-//                    Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
-//                    return; // Stop the registration process
-//                }
-//
-//                HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
-//                reference.child(username).setValue(helperClass);
-//
-//                Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
-//                Intent i = new Intent(RegisterActivity.this, Log.class);
-//                startActivity(i);
-
                 final String username = regUsername.getText().toString().trim();
 
                 DatabaseReference databaseReference = database.getReference("users");
@@ -78,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            Toast.makeText(RegisterActivity.this, "Username already exists", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Tài khoản đã tồn tại", Toast.LENGTH_SHORT).show();
                         } else {
                             String name = regName.getText().toString().trim();
                             String email = regEmail.getText().toString().trim();
@@ -86,19 +68,19 @@ public class RegisterActivity extends AppCompatActivity {
                             String confirmPass = confirmPassword.getText().toString().trim();
 
                             if (!password.equals(confirmPass)) {
-                                Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
                                 return;
                             }
                             else if (password.length() <= 7)
                             {
-                                Toast.makeText(RegisterActivity.this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegisterActivity.this, "Mật khẩu ít nhất phải có 8 kí tự", Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
                             HelperClass helperClass = new HelperClass(name, username, email, password, confirmPass);
                             reference.child(username).setValue(helperClass);
 
-                            Toast.makeText(RegisterActivity.this, "Register successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                             Intent i = new Intent(RegisterActivity.this, Log.class);
                             startActivity(i);
                         }

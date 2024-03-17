@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!validateUsername() | !validatePassword()) {
-                    Toast.makeText(LoginActivity.this, "Please enter valid crendentials", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Vui lòng nhập tên tài khoản", Toast.LENGTH_SHORT).show();
                 }
                 else {
                     checkUser();
@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     public Boolean validateUsername() {
         String username = loginUsername.getText().toString();
         if (username.isEmpty()) {
-            loginUsername.setError("Username cannot be empty");
+            loginUsername.setError("Tài khoản không thể trống");
             return false;
         }
         else {
@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     public Boolean validatePassword() {
         String password = loginPassword.getText().toString();
         if (password.isEmpty()) {
-            loginPassword.setError("Password cannot be empty");
+            loginPassword.setError("Mật khẩu không thể trống");
             return false;
         }
         else {
@@ -111,12 +111,12 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else {
-                        loginPassword.setError("Invalid Credentials");
+                        loginPassword.setError("Đăng nhập không hợp lệ");
                         loginPassword.requestFocus();
                     }
                 }
                 else {
-                    loginUsername.setError("User does not exist");
+                    loginUsername.setError("Tài khoản không tồn tại");
                     loginUsername.requestFocus();
                 }
             }
