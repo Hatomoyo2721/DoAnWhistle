@@ -81,14 +81,6 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         intialViews();
         setClickListeners();
 
-        if (SHOW_MINI_PLAYER) {
-            updateMiniPlayerUI();
-            updatePlayPauseButtonUI();
-        }
-        else {
-            rootView.setVisibility(View.GONE);
-        }
-
         songChangeReceiver = new SongChangeBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter(ACTION_SONG_CHANGED);
         getContext().registerReceiver(songChangeReceiver, intentFilter, Context.RECEIVER_EXPORTED);
@@ -148,6 +140,8 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
                 ARTIST_TO_FRAG = null;
                 SONG_NAME_TO_FRAG = null;
             }
+
+            rootView.setVisibility(SHOW_MINI_PLAYER ? View.VISIBLE : View.GONE);
         }
     }
 

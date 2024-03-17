@@ -14,6 +14,7 @@ import android.Manifest;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -28,6 +29,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.LoginReg.AccountInfoActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import java.lang.reflect.Array;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public static String SONG_NAME_TO_FRAG =  null;
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
+    private boolean isInInfoAccount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,9 +227,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         getMenuInflater().inflate(R.menu.search, menu);
         MenuItem menuItem = menu.findItem(R.id.search_option);
         SearchView searchView = (SearchView) menuItem.getActionView();
+
         if (searchView != null) {
             searchView.setOnQueryTextListener(this);
         }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -273,6 +278,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 editor.apply();
                 this.recreate();
                 break;
+        }
+
+        int id = item.getItemId();
+        if (id == R.id.home_info) {
+            Intent i = new Intent(MainActivity.this, AccountInfoActivity.class);
+            startActivity(i);
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

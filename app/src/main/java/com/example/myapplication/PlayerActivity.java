@@ -563,8 +563,6 @@ public class PlayerActivity extends AppCompatActivity
             MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
             musicService = myBinder.getService();
             musicService.setCallBack(this);
-//        Toast.makeText(this, "Kết nối thành công" + musicService,
-//                Toast.LENGTH_SHORT).show();
             seekBar.setMax(musicService.getDuration() / 1000);
             metaData(uri);
             song_name.setText(listSongs.get(position).getTitle());
