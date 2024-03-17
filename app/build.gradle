@@ -46,6 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.2.0'
 
     implementation 'com.google.firebase:firebase-perf:20.5.2'
+    implementation 'androidx.activity:activity:1.8.0'
     testImplementation 'junit:junit:4.13.2'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -5,37 +5,46 @@
     tools:context="com.example.myapplication.MainActivity">
 
     <item
+        android:id="@+id/home_info"
+        android:icon="@drawable/baseline_home_24"
+        android:title="home_info"
+        app:showAsAction="ifRoom">
+
+    </item>
+
+
+    <item
         android:id="@+id/search_option"
-        android:title="search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView" />
-        <!--app:actionViewClass="androidx.appcompat.widget.SearchView"
-        No need appcompat sh*t
+        android:title="search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="ifRoom" />
+    <!--app:actionViewClass="androidx.appcompat.widget.SearchView"
+    No need appcompat sh*t
 
-        -->
-        <item
-            android:id="@+id/sort_options"
-            android:title="Sắp xếp"
-            app:showAsAction="never">
+    -->
+    <item
+        android:id="@+id/sort_options"
+        android:title="Sắp xếp"
+        app:showAsAction="never">
 
-            <menu>
-                <item
-                    android:id="@+id/by_name"
-                    android:title="Tên"
-                    app:showAsAction="never"/>
+        <menu>
+            <item
+                android:id="@+id/by_name"
+                android:title="Tên"
+                app:showAsAction="never" />
 
-                <item
-                    android:id="@+id/by_date"
-                    android:title="Ngày"
-                    app:showAsAction="never"/>
+            <item
+                android:id="@+id/by_date"
+                android:title="Ngày"
+                app:showAsAction="never" />
 
-                <item
-                    android:id="@+id/by_size"
-                    android:title="Thời lượng"
-                    app:showAsAction="never"/>
+            <item
+                android:id="@+id/by_size"
+                android:title="Thời lượng"
+                app:showAsAction="never" />
 
-            </menu>
+        </menu>
 
-        </item>
+    </item>
 </menu>
