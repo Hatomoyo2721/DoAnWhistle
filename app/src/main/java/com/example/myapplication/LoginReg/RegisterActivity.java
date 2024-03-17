@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 public class RegisterActivity extends AppCompatActivity {
     EditText regName, regEmail, regUsername, regPassword, confirmPassword;
     TextView loginView;
@@ -34,6 +36,8 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         regName = findViewById(R.id.inputName);
         regEmail = findViewById(R.id.inputEmail);

@@ -135,7 +135,7 @@
 
     <Button
         android:id="@+id/btnRegister"
-        android:layout_width="0dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@drawable/btn_login"
@@ -153,6 +153,7 @@
         android:textSize="15sp"
         android:shadowColor="@color/white"
         android:text="Already have an Account?"
+        android:textStyle="bold"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@+id/btnRegister"
         app:layout_constraintStart_toStartOf="@+id/btnRegister"
