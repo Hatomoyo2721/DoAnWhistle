@@ -8,6 +8,16 @@
     android:padding="10dp"
     tools:context=".LoginReg.AccountInfoActivity">
 
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/baseline_arrow_back"
+        android:background="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Header -->
     <TextView
         android:id="@+id/text_header"
@@ -17,15 +27,16 @@
         android:padding="10dp"
         android:text="Personal Information"
         android:textSize="24sp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/back_button" />
 
     <!-- Image User -->
     <ImageView
         android:id="@+id/image_user"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
         android:layout_marginTop="5dp"
         android:src="@drawable/user_image"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,26 +105,5 @@
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@id/text_username_label"
         app:layout_constraintTop_toBottomOf="@id/text_email_label" />
-
-    <!-- Password -->
-    <TextView
-        android:id="@+id/text_password_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Password:"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_username_label" />
-
-    <TextView
-        android:id="@+id/info_password"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="**********"
-        android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@id/text_password_label"
-        app:layout_constraintTop_toBottomOf="@id/text_username_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
