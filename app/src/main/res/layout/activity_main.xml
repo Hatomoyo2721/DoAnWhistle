@@ -18,6 +18,7 @@
         app:tabIndicatorHeight="40dp"
         app:tabIndicatorColor="#5DC6D3"
         app:tabIndicator="@drawable/tab_indicator"
+        android:layout_above="@+id/frag_bottom_player"
         />
 
     <androidx.viewpager.widget.ViewPager
