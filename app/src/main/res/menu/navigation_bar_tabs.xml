@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="tab_home"
+        android:icon="@drawable/baseline_home_main"
+        android:title="Home"/>
+
+    <item
+        android:id="tab_library"
+        android:icon="@drawable/baseline_library_music_main"
+        android:title="Library"/>
+
+</menu>
