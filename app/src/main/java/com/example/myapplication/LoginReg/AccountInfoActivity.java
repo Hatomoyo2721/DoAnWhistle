@@ -5,6 +5,7 @@ import static android.app.PendingIntent.getActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,13 +30,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.rpc.Help;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class AccountInfoActivity extends AppCompatActivity {
-    Button btnLogout, userListView;
+    Button btnLogout, userListView, btnUpdate;
     HelperClass helperClass;
     TextView info_name, info_mail, info_username;
+    private DatabaseReference userRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,14 @@ public class AccountInfoActivity extends AppCompatActivity {
 
         ImageView backBtn = findViewById(R.id.back_button_info);
         btnLogout = findViewById(R.id.logout_button_info);
+        btnUpdate = findViewById(R.id.update_account_btn_info);
         userListView = findViewById(R.id.user_list_info);
         info_name = findViewById(R.id.info_name);
         info_mail = findViewById(R.id.info_email);
         info_username = findViewById(R.id.info_username);
 
         helperClass = new HelperClass();
+
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,13 +79,25 @@ public class AccountInfoActivity extends AppCompatActivity {
         });
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference userRef = database.getReference("users");
+        userRef = database.getReference("users");
+
+        DisplayUserInfo();
+
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updatedUserInfo();
+            }
+        });
+    }
+
+    private void DisplayUserInfo() {
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                        // Lấy thông tin từ mỗi nút con
+
                         String name = userSnapshot.child("name").getValue(String.class);
                         String email = userSnapshot.child("email").getValue(String.class);
                         String username = userSnapshot.child("username").getValue(String.class);
@@ -111,6 +130,30 @@ public class AccountInfoActivity extends AppCompatActivity {
                 Log.e("AccountInfoActivity", databaseError.getMessage());
                 userListView.setVisibility(View.GONE);
             }
+        });
+    }
+
+    private void updatedUserInfo() {
+        String newName = info_name.getText().toString().trim();
+        String newEmail = info_mail.getText().toString().trim();
+        String newUsername = info_username.getText().toString().trim();
+
+        if (TextUtils.isEmpty(newName) || TextUtils.isEmpty(newEmail) || TextUtils.isEmpty(newUsername)) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update user information in Firebase Realtime Database
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", newName);
+        updates.put("email", newEmail);
+        updates.put("username", newUsername);
+
+        userRef.child("username").updateChildren(updates).addOnSuccessListener(aVoid -> {
+            Toast.makeText(AccountInfoActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+            DisplayUserInfo();
+        }).addOnFailureListener(e -> {
+            Toast.makeText(AccountInfoActivity.this, "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
         });
     }
 
