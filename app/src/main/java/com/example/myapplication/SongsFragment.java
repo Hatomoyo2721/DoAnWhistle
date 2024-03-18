@@ -72,7 +72,7 @@ public class SongsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_songs, container, false);
         recyclerView = v.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        if (!(musicFiles.size() < 1)) { //musicFiles = variable from MainActivity, using import to get it!!
+        if (!(musicFiles.isEmpty())) { //musicFiles = variable from MainActivity, using import to get it!!
             musicAdapter = new MusicAdapter(getContext(), musicFiles);
             recyclerView.setAdapter(musicAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
