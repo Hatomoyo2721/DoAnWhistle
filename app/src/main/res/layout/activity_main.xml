@@ -7,7 +7,6 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-<!--
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
@@ -20,34 +19,20 @@
         app:tabIndicatorColor="#5DC6D3"
         app:tabIndicator="@drawable/tab_indicator"
         />
-        -->
 
-    <com.realgear.readable_bottom_bar.ReadableBottomBar
-        android:id="@+id/root_navigation_bar"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/navigation_bar_height"
-        android:background="#FFF"
-        android:clickable="true"
-        app:rbb_selectedTabType="text"
-        app:rbb_indicatorAppearance="round"
-        app:rbb_indicatorStyle="normal"
-        app:rbb_indicatorMargin="20dp"
-        app:rbb_indicatorHeight="4dp"
-        app:rbb_tabs="@menu/navigation_bar_tabs"
-        app:rbb_selectedIndex="0"
-        app:rbb_tabColor="#333333"
-        app:rbb_indicatorColor="#448AFF"
-        app:rbb_tabColorSelected="#448AFF"
-        app:rbb_textStyle="bold"
-        app:rbb_textSize="16sp"
-        app:rbb_iconSize="30dp"
-        android:layout_alignParentBottom="true"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tab_layout"
+        android:layout_alignBottom="@id/frag_bottom_player"
+        />
 
     <FrameLayout
         android:id="@+id/frag_bottom_player"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/root_navigation_bar">
+        android:layout_alignParentBottom="true">
 
         <fragment
             android:layout_width="match_parent"

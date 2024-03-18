@@ -24,6 +24,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ import android.widget.Toast;
 
 import com.example.myapplication.LoginReg.AccountInfoActivity;
 import com.google.android.material.tabs.TabLayout;
+import com.realgear.readable_bottom_bar.ReadableBottomBar;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         permission();
     }
 
@@ -97,17 +100,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    private void initViewPager() { //Function show fragments - ViewPager + TabLayout cho 2 fragments: Song + Album
-        ViewPager vPager = findViewById(R.id.view_pager);
+    private void initViewPager() {
+        ViewPager viewPager = findViewById(R.id.view_pager);
         TabLayout tabLayout = findViewById(R.id.tab_layout);
-        ViewPagerAdapter vPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        vPagerAdapter.addFragments(new SongsFragment(), "Songs");
-        vPagerAdapter.addFragments(new AlbumFragment(), "Album");
-        vPager.setAdapter(vPagerAdapter);
-        tabLayout.setupWithViewPager(vPager);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragments(new SongsFragment(), "Songs");
+        viewPagerAdapter.addFragments(new AlbumFragment(), "Albums");
+        viewPager.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
-        // 3 / 3 / 2024
-        //custom_tab_layout for editing text size
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             if (tab != null) {
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 tabTextView.setText(tab.getText());
             }
         }
+
     }
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter { //Quản lý fragments và titles
