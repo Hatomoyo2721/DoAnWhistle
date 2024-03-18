@@ -9,7 +9,7 @@ public class HelperClass {
         this.email = email;
         this.password = password;
         this.confirmPass = confirmPassword;
-        this.role = role = "customer";
+        this.role = role;
     }
 
 
