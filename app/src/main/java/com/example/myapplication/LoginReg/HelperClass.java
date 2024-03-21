@@ -3,12 +3,11 @@ package com.example.myapplication.LoginReg;
 public class HelperClass {
     private String name, username, email, password, confirmPass, role;
 
-    public HelperClass(String name, String username, String email, String password, String confirmPassword, String role) {
+    public HelperClass(String name, String username, String email, String password, String role) {
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.confirmPass = confirmPassword;
         this.role = role;
     }
 

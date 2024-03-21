@@ -37,6 +37,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.palette:palette:1.0.0'
 
+    implementation(platform('com.google.firebase:firebase-bom:32.7.4'))
     implementation 'com.google.firebase:firebase-analytics:21.5.1'
     implementation 'com.google.firebase:firebase-core:21.1.1'
     implementation 'com.google.firebase:firebase-firestore:24.10.3'
@@ -45,6 +46,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-collection:18.0.1'
     implementation 'com.google.firebase:firebase-database-connection:16.0.2'
     implementation 'com.google.firebase:firebase-database:19.2.0'
+    implementation 'com.google.firebase:firebase-storage:20.3.0'
 
     implementation 'com.google.firebase:firebase-perf:20.5.2'
     implementation 'androidx.activity:activity:1.8.0'
