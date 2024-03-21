@@ -11,7 +11,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginStart="20dp"
         app:cardCornerRadius="30dp"
@@ -31,14 +31,23 @@
                 android:text="Upload Song"
                 android:textAlignment="center"
                 android:textColor="@color/black"
-                android:textSize="30sp"/>
+                android:textSize="24sp"/>
+
+            <ImageView
+                android:layout_marginTop="2dp"
+                android:id="@+id/selected_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="centerCrop"/>
 
             <Button
                 android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="15dp"
                 android:text="Select file"
+                android:textSize="13sp"
                 android:textColor="@color/white"
                 android:background="@drawable/btn_save_songs"
                 android:layout_gravity="center"
@@ -47,8 +56,9 @@
             <Button
                 android:id="@+id/btnSelectImage"
                 android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:text="Select image"
+                android:textSize="13sp"
                 android:textColor="@color/white"
                 android:background="@drawable/btn_save_songs"
                 android:layout_gravity="center"
@@ -57,8 +67,7 @@
             <EditText
                 android:id="@+id/uploadNameSong"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="55dp"
                 android:background="@drawable/upload_song"
                 android:gravity="center|center_vertical"
                 android:padding="16dp"
@@ -68,8 +77,8 @@
             <EditText
                 android:id="@+id/uploadArtistSong"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/upload_song"
                 android:gravity="center|center_vertical"
                 android:padding="16dp"
@@ -79,8 +88,8 @@
             <EditText
                 android:id="@+id/uploadNameSinger"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/upload_song"
                 android:gravity="center|center_vertical"
                 android:padding="16dp"
@@ -90,8 +99,8 @@
             <EditText
                 android:id="@+id/uploadNameAlbum"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/upload_song"
                 android:gravity="center|center_vertical"
                 android:padding="16dp"
@@ -100,13 +109,14 @@
 
             <Button
                 android:id="@+id/btn_save_songs"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="15dp"
                 android:text="Save"
-                android:textSize="20sp"
+                android:textSize="12sp"
                 android:textColor="@color/white"
-                android:background="@drawable/btn_save_songs"/>
+                android:background="@drawable/btn_save_songs"
+                android:layout_gravity="center"/>
 
 
 

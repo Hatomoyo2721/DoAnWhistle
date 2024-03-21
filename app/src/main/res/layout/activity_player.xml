@@ -32,22 +32,11 @@
         android:layout_centerVertical="true"
         android:text="Now Playing"
         android:textColor="@color/white"
-        android:layout_toEndOf="@id/back_btn"
-        android:layout_toStartOf="@id/menu_btn"
         android:gravity="center_horizontal"
         android:textSize="14sp"
         android:textStyle="bold"
         />
 
-        <ImageView
-            android:id="@+id/menu_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/baseline_menu"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
-            />
     </RelativeLayout>
 
     <RelativeLayout

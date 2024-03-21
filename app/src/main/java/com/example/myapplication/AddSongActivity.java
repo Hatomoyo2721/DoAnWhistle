@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class AddSongActivity extends AppCompatActivity {
+    ImageView selectedImage;
     EditText uploadName, uploadArtist, uploadSinger, uploadAlbum;
     Button saveBtn, uploadFile, uploadImage;
     String audioUrl, imageUrl;
@@ -55,6 +57,8 @@ public class AddSongActivity extends AppCompatActivity {
         saveBtn = findViewById(R.id.btn_save_songs);
         uploadFile = findViewById(R.id.btnSelectFile);
         uploadImage = findViewById(R.id.btnSelectImage);
+        selectedImage = findViewById(R.id.selected_image);
+
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
@@ -88,6 +92,7 @@ public class AddSongActivity extends AppCompatActivity {
                         if (o.getResultCode() == RESULT_OK) {
                             Intent intent = o.getData();
                             uriImg = intent.getData();
+                            selectedImage.setImageURI(uriImg);
                         } else {
                             Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
                         }

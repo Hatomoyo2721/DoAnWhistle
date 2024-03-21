@@ -7,6 +7,8 @@ import static com.example.myapplication.MusicAdapter.music_Files;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.palette.graphics.Palette;
 
 import android.content.ComponentName;
@@ -17,11 +19,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -96,6 +100,7 @@ public class PlayerActivity extends AppCompatActivity
         Objects.requireNonNull(getSupportActionBar()).hide();
         initViews(); //Ánh xạ
         getIntentMethod();
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override //Cho người dùng thay đổi thời gian của nhạc đang phát
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
