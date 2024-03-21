@@ -26,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.os.IBinder;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.io.IOException;
 
 public class NowPlayingFragmentBottom extends Fragment implements ServiceConnection {
@@ -154,7 +156,7 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
                             .into(albumArt);
                     songName.setText(SONG_NAME_TO_FRAG);
                     artist.setText(ARTIST_TO_FRAG);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -190,7 +192,7 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
                         getContext().bindService(intent, this, BIND_AUTO_CREATE);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -203,19 +205,22 @@ public class NowPlayingFragmentBottom extends Fragment implements ServiceConnect
         }
     }
 
-    private byte[] getAlbumArt(String s) throws IOException {
+    private byte[] getAlbumArt(String filePath) {
         try {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(s);
-            byte[] art = retriever.getEmbeddedPicture();
-            retriever.release();
+            File file = new File(filePath);
+            if (file.exists()) {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(filePath);
+                byte[] art = retriever.getEmbeddedPicture();
+                retriever.release();
 
-            if (art != null) {
                 return art;
+            } else {
+                // Handle the case when the file does not exist
+                Log.e("AlbumArt", "File does not exist: " + filePath);
+                return null;
             }
-            return null;
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

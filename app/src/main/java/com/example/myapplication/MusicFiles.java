@@ -7,7 +7,10 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private String album; //Album của tác giả
     private String duration; //Thời lượng
 
-    public MusicFiles(String path, String title, String artist, String duration, String album) {
+    public MusicFiles(String path, String title, String artist, String album, String duration) {
+        if (path == null || title == null || artist == null || album == null || duration == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
         this.path = path;
         this.title = title;
         this.artist = artist;

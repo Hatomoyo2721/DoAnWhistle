@@ -44,6 +44,16 @@
                 android:layout_gravity="center"
                 android:id="@+id/btnSelectFile"/>
 
+            <Button
+                android:id="@+id/btnSelectImage"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Select image"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_save_songs"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20dp"/>
+
             <EditText
                 android:id="@+id/uploadNameSong"
                 android:layout_width="match_parent"

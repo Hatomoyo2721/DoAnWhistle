@@ -35,10 +35,9 @@ import java.util.Objects;
 
 public class AddSongActivity extends AppCompatActivity {
     EditText uploadName, uploadArtist, uploadSinger, uploadAlbum;
-    Button saveBtn, uploadFile;
-    String audioUrl;
-    Uri uriAu;
-    MediaPlayer mediaPlayer;
+    Button saveBtn, uploadFile, uploadImage;
+    String audioUrl, imageUrl;
+    Uri uriAu, uriImg;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference ref = db.collection("Music");
 
@@ -55,20 +54,22 @@ public class AddSongActivity extends AppCompatActivity {
         uploadAlbum = findViewById(R.id.uploadNameAlbum);
         saveBtn = findViewById(R.id.btn_save_songs);
         uploadFile = findViewById(R.id.btnSelectFile);
+        uploadImage = findViewById(R.id.btnSelectImage);
 
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-            @Override
-            public void onActivityResult(ActivityResult o) {
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
 
-                if (o.getResultCode() == RESULT_OK) {
-                    Intent intent = o.getData();
-                    uriAu = intent.getData();
-                    uploadFile.setText(uriAu.toString());
-                } else {
-                    Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+                        if (o.getResultCode() == RESULT_OK) {
+                            Intent intent = o.getData();
+                            uriAu = intent.getData();
+                            uploadFile.setText(uriAu.toString());
+                        } else {
+                            Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         uploadFile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +77,29 @@ public class AddSongActivity extends AppCompatActivity {
                 Intent Photo = new Intent(Intent.ACTION_GET_CONTENT);
                 Photo.setType("audio/*");
                 activityResultLauncher.launch(Photo);
+            }
+        });
+
+        ActivityResultLauncher<Intent> imageActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult o) {
+
+                        if (o.getResultCode() == RESULT_OK) {
+                            Intent intent = o.getData();
+                            uriImg = intent.getData();
+                        } else {
+                            Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        uploadImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                imageActivityResultLauncher.launch(intent);
             }
         });
 
@@ -93,8 +117,13 @@ public class AddSongActivity extends AppCompatActivity {
         String singer = uploadSinger.getText().toString().trim();
         String album = uploadAlbum.getText().toString().trim();
 
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(artist) || TextUtils.isEmpty(singer)) {
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(artist) || TextUtils.isEmpty(singer) || uriImg == null) {
             Toast.makeText(AddSongActivity.this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (uriAu == null) {
+            Toast.makeText(AddSongActivity.this, "Please select an audio file", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -104,21 +133,37 @@ public class AddSongActivity extends AppCompatActivity {
             storageReference.putFile(uriAu).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                    uriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    Task<Uri> audioUriTask = taskSnapshot.getStorage().getDownloadUrl();
+                    audioUriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
                             audioUrl = uri.toString();
-                            String duration = "";
-                            MusicFiles musicFiles = new MusicFiles(audioUrl, name, artist, duration, album);
-                            MediaPlayer mediaPlayer= MediaPlayer.create(AddSongActivity.this,uriAu);
-                            duration = String.valueOf(Integer.parseInt(String.valueOf(mediaPlayer.getDuration()/ 1000)));
 
-                            ref.add(musicFiles).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            StorageReference imageStorageReference = FirebaseStorage.getInstance().getReference().child("Image")
+                                    .child(uriImg.getLastPathSegment());
+                            imageStorageReference.putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
-                                public void onSuccess(DocumentReference documentReference) {
-                                    Toast.makeText(AddSongActivity.this, "Thêm bài hát thành công", Toast.LENGTH_SHORT).show();
-                                    finish();
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Task<Uri> imageUriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                    imageUriTask.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            imageUrl = uri.toString();
+
+                                            String duration = "";
+                                            MusicFiles musicFiles = new MusicFiles(audioUrl, name, artist, duration, album);
+                                            MediaPlayer mediaPlayer = MediaPlayer.create(AddSongActivity.this, uriAu);
+                                            duration = String.valueOf(Integer.parseInt(String.valueOf(mediaPlayer.getDuration() / 1000)));
+
+                                            ref.add(musicFiles).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    Toast.makeText(AddSongActivity.this, "Thêm bài hát thành công", Toast.LENGTH_SHORT).show();
+                                                    finish();
+                                                }
+                                            });
+                                        }
+                                    });
                                 }
                             });
                         }
