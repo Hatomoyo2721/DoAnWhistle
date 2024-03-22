@@ -96,8 +96,8 @@ public class RegisterActivity extends AppCompatActivity {
         if (!password.equals(confirmPass)) {
             Toast.makeText(RegisterActivity.this, "Mật khẩu không trùng khớp", Toast.LENGTH_SHORT).show();
             return;
-        } else if (password.length() <= 7) {
-            Toast.makeText(RegisterActivity.this, "Mật khẩu ít nhất phải có 8 kí tự", Toast.LENGTH_SHORT).show();
+        } else if (password.length() <= 5) {
+            Toast.makeText(RegisterActivity.this, "Mật khẩu ít nhất phải có 6 kí tự", Toast.LENGTH_SHORT).show();
             return;
         }
 

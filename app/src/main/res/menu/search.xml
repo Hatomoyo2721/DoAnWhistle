@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.myapplication.MainActivity">
 
+    <!--
     <item
         android:id="@+id/home_info"
         android:icon="@drawable/baseline_home_24"
@@ -11,6 +12,7 @@
         app:showAsAction="ifRoom">
 
     </item>
+    -->
 
 
     <item
@@ -19,10 +21,7 @@
         android:title="search"
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
-    <!--app:actionViewClass="androidx.appcompat.widget.SearchView"
-    No need appcompat sh*t
 
-    -->
     <item
         android:id="@+id/sort_options"
         android:title="Sắp xếp"

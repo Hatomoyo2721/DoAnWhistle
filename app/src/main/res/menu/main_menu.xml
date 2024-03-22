@@ -12,11 +12,11 @@
             <group android:checkableBehavior="single">
                 <item android:id="@+id/about"
                     android:icon="@drawable/baseline_account_circle_24"
-                    android:title="About"/>
+                    android:title="Your info"/>
 
                 <item android:id="@+id/list_favourite_songs"
                     android:icon="@drawable/baseline_no_favorite_border"
-                    android:title="Favorite"/>
+                    android:title="Your favorite"/>
             </group>
         </menu>
     </item>
@@ -26,7 +26,7 @@
             <group android:checkableBehavior="single">
                 <item android:id="@+id/share"
                     android:icon="@drawable/baseline_share_24"
-                    android:title="About"/>
+                    android:title="About us"/>
 
                 <item android:id="@+id/rate_us"
                     android:icon="@drawable/baseline_rate_us"

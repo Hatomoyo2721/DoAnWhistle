@@ -23,7 +23,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.myapplication.AddSongActivity;
 import com.example.myapplication.MainActivity;
+import com.example.myapplication.MusicService;
 import com.example.myapplication.R;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,6 +52,7 @@ public class AccountInfoActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseFirestore firestore;
     String UserID;
+    MusicService musicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +82,20 @@ public class AccountInfoActivity extends AppCompatActivity {
             }
         });
 
+        DocumentReference userDocRef = firestore.collection("users").document(UserID);
+        userDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String role = documentSnapshot.getString("role");
+                if (role.equals("Admin")) {
+                    userAddSong.setVisibility(View.VISIBLE);
+                }
+                else {
+                    userAddSong.setVisibility(View.GONE);
+                }
+            }
+        });
+
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +110,7 @@ public class AccountInfoActivity extends AppCompatActivity {
                 Toast.makeText(AccountInfoActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(AccountInfoActivity.this, LoginActivity.class);
                 startActivity(intent);
+                musicService.stopSelf();
                 finish();
             }
         });
