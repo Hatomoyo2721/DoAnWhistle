@@ -2,7 +2,11 @@ package com.example.myapplication.LoginReg;
 
 import static android.app.PendingIntent.getActivity;
 
+import static com.example.myapplication.R.string.user_data_key;
+
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
@@ -47,12 +51,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class AccountInfoActivity extends AppCompatActivity {
-    Button btnLogout, userAddSong;
+    Button userAddSong;
     TextView info_name, info_mail, info_username;
     FirebaseAuth auth;
     FirebaseFirestore firestore;
     String UserID;
     MusicService musicService;
+    final String USER_DATA_KEY = "user_data";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,6 @@ public class AccountInfoActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).hide();
 
         ImageView backBtn = findViewById(R.id.back_button_info);
-        btnLogout = findViewById(R.id.logout_button_info);
         userAddSong = findViewById(R.id.user_add_song);
         info_name = findViewById(R.id.info_name);
         info_mail = findViewById(R.id.info_email);
@@ -99,18 +103,6 @@ public class AccountInfoActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-            }
-        });
-
-        btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Toast.makeText(AccountInfoActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(AccountInfoActivity.this, LoginActivity.class);
-                startActivity(intent);
-                musicService.stopSelf();
                 finish();
             }
         });

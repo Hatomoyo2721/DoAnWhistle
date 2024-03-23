@@ -35,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.LoginReg.AccountInfoActivity;
+import com.example.myapplication.LoginReg.LoginActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     FirebaseAuth auth;
     FirebaseFirestore firestore;
     FirebaseUser firebaseUser;
-    String UserID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +95,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     case R.id.home:
                         Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
                         break;
-                    case R.id.about:
-                        Intent intent = new Intent(MainActivity.this, AccountInfoActivity.class);
-                        startActivity(intent);
+                    case R.id.logout:
+                        FirebaseAuth.getInstance().signOut();
+                        Intent intentLogout = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intentLogout);
+                        Toast.makeText(MainActivity.this, "Đã đăng xuất", Toast.LENGTH_SHORT).show();
+                        finish();
                         break;
+                    case R.id.about:
+                        FirebaseUser userLogin = FirebaseAuth.getInstance().getCurrentUser();
+                        if (userLogin != null) {
+                            Intent intent = new Intent(MainActivity.this, AccountInfoActivity.class);
+                            startActivity(intent);
+                            break;
+                        }
+                        else {
+                            Toast.makeText(MainActivity.this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
+                        }
                     case R.id.list_favourite_songs:
                         Toast.makeText(MainActivity.this, "List Favorite Songs", Toast.LENGTH_SHORT).show();
                         break;
@@ -116,13 +129,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         View headerView = navigationView.getHeaderView(0);
         TextView drawerName = headerView.findViewById(R.id.drawer_name);
 
-        auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        firebaseUser = auth.getCurrentUser();
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (firebaseUser != null) {
-            UserID = firebaseUser.getUid();
-            firestore.collection("users").document(UserID).get().addOnSuccessListener(documentSnapshot -> {
+            DocumentReference documentReference = firestore.collection("users").document(firebaseUser.getUid());
+            documentReference.get().addOnSuccessListener(documentSnapshot -> {
                 if (documentSnapshot.exists()) {
                     String name = documentSnapshot.getString("name");
                     name = "Hello, " + name;

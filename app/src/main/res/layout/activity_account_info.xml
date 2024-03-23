@@ -115,21 +115,10 @@
         android:layout_marginTop="20dp"
         android:text="Add Song"
         android:background="@drawable/account_info_btn"
-        app:layout_constraintTop_toBottomOf="@id/logout_button_info"
+        app:layout_constraintTop_toBottomOf="@id/info_username"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5" />
 
-    <Button
-        android:id="@+id/logout_button_info"
-        android:layout_width="230dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Log Out"
-        android:background="@drawable/account_info_btn"
-        app:layout_constraintTop_toBottomOf="@id/info_username"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

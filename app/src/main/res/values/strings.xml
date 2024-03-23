@@ -5,4 +5,6 @@
 
     <string name="open">Open Navigation Drawer</string>
     <string name="close">Close Navigation Drawer</string>
+
+    <string name="user_data_key">user_data</string>
 </resources>
