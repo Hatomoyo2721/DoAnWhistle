@@ -5,6 +5,7 @@ import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
 import static com.example.myapplication.MusicAdapter.music_Files;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -25,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -37,7 +39,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.nio.channels.InterruptedByTimeoutException;
@@ -416,7 +423,6 @@ public class PlayerActivity extends AppCompatActivity
         return random.nextInt(i + 1);
     }
 
-    //Chuyển đơn vị giây -> phút:giây
     private String formattedTime(int mCurrentPosition) {
         String totalout = "";
         String totalNew = "";
@@ -431,8 +437,6 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
-    //Trước 25 - 02 - 2024: Lấy info vị trí bài hát và khởi tạo các thành phần khác
-    //25 - 02 - 2024: Hàm này mới thêm "sender" để chạy được nhạc trong Albums
     private void getIntentMethod() {
         position = getIntent().getIntExtra("position", -1);
         String sender = getIntent().getStringExtra("sender");
@@ -445,17 +449,51 @@ public class PlayerActivity extends AppCompatActivity
         if (listSongs != null) {
             play_pause_btn.setImageResource(R.drawable.baseline_pause);
             uri = Uri.parse(listSongs.get(position).getPath());
+
+            getSongDetailsFromFirestore(position);
         }
         Intent i = new Intent(this, MusicService.class);
         i.putExtra("servicePosition", position);
         startService(i);
     }
 
-    //Giải thích MetadataRetriever: Truy xuất info từ các tệp multimedia: music, video,... Truy xuất nội dung của tệp: Title, Artist, Album,...
+    private void getSongDetailsFromFirestore(int position) {
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .collection("music")
+                .document(listSongs.get(position).getPath());
+
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String title = document.getString("title");
+                        String artist = document.getString("artist");
+                        long duration = document.getLong("duration"); // Thời lượng bài hát
+
+                        // Cập nhật thông tin bài hát
+                        song_name.setText(title);
+                        artist_name.setText(artist);
+
+                        // Cập nhật thời lượng bài hát cho SeekBar
+                        seekBar.setMax((int) (duration / 1000));
+
+                        // Cập nhật các thông tin khác cho MusicService (nếu cần)
+                    } else {
+                        Log.d("Firestore", "No such document");
+                    }
+                } else {
+                    Log.w("Firestore", "Error getting documents.", task.getException());
+                }
+            }
+        });
+    }
+
     private void metaData(Uri uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
-        int durationTotal = Integer.parseInt(listSongs.get(position).getDuration()) / 1000;
+        int durationTotal = listSongs.get(position).getDuration() / 1000;
         duration_finished.setText(formattedTime(durationTotal));
         byte[] art = retriever.getEmbeddedPicture();
         Bitmap bitmap;
@@ -517,7 +555,6 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
-    //26 - 02 - 2024
     //Effect khi chuyển nhạc khác
     public void imageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap) {
         Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
@@ -560,7 +597,6 @@ public class PlayerActivity extends AppCompatActivity
     }
 
 
-    //27 - 02 - 2024
     //Hàm thông báo khi kết nối service thành công / ngắt kết nối
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
@@ -579,7 +615,6 @@ public class PlayerActivity extends AppCompatActivity
         }
     }
 
-    //27 - 02 - 2024
     @Override
     public void onServiceDisconnected(ComponentName name) {
         musicService = null;

@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.UriMatcher;
 import android.media.MediaPlayer;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -41,8 +43,10 @@ public class AddSongActivity extends AppCompatActivity {
     String audioUrl, imageUrl;
     Uri uriAu, uriImg;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    CollectionReference ref = db.collection("Music");
+    CollectionReference ref = db.collection("music");
+    ProgressBar progressBar;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,22 +62,21 @@ public class AddSongActivity extends AppCompatActivity {
         uploadFile = findViewById(R.id.btnSelectFile);
         uploadImage = findViewById(R.id.btnSelectImage);
         selectedImage = findViewById(R.id.selected_image);
+        progressBar = findViewById(R.id.loading_progress);
 
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult o) {
 
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult o) {
-
-                        if (o.getResultCode() == RESULT_OK) {
-                            Intent intent = o.getData();
-                            uriAu = intent.getData();
-                            uploadFile.setText(uriAu.toString());
-                        } else {
-                            Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                if (o.getResultCode() == RESULT_OK) {
+                    Intent intent = o.getData();
+                    uriAu = intent.getData();
+                    uploadFile.setText(uriAu.toString());
+                } else {
+                    Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         uploadFile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,20 +87,22 @@ public class AddSongActivity extends AppCompatActivity {
             }
         });
 
-        ActivityResultLauncher<Intent> imageActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult o) {
+        ActivityResultLauncher<Intent> imageActivityResultLauncher =
+                registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult o) {
 
-                        if (o.getResultCode() == RESULT_OK) {
-                            Intent intent = o.getData();
-                            uriImg = intent.getData();
-                            selectedImage.setImageURI(uriImg);
-                        } else {
-                            Toast.makeText(AddSongActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                if (o.getResultCode() == RESULT_OK) {
+                    Intent intent = o.getData();
+                    uriImg = intent.getData();
+                    selectedImage.setImageURI(uriImg);
+                } else {
+                    Toast.makeText(AddSongActivity.this,
+                            "Không có file", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         uploadImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +116,11 @@ public class AddSongActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                if (progressBar != null) {
+//                    progressBar.setVisibility(View.VISIBLE);
+//                }
                 saveData();
+
             }
         });
     }
@@ -122,19 +131,30 @@ public class AddSongActivity extends AppCompatActivity {
         String singer = uploadSinger.getText().toString().trim();
         String album = uploadAlbum.getText().toString().trim();
 
-        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(artist) || TextUtils.isEmpty(singer) || uriImg == null) {
-            Toast.makeText(AddSongActivity.this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(name) || TextUtils.isEmpty(artist)
+                || TextUtils.isEmpty(singer) || TextUtils.isEmpty(album)) {
+            Toast.makeText(AddSongActivity.this,
+                    "Vui lòng điền đầy đủ thông tin",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (uriAu == null) {
-            Toast.makeText(AddSongActivity.this, "Please select an audio file", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddSongActivity.this,
+                    "Vui lòng chọn file nhạc",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
+        if (uriImg == null) {
+            Toast.makeText(AddSongActivity.this,
+                    "Vui lòng chọn ảnh cho nhạc",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(artist) && !TextUtils.isEmpty(singer)) {
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Audio")
-                    .child(uriAu.getLastPathSegment());
+            StorageReference storageReference = FirebaseStorage
+                    .getInstance().getReference().child("Audio").child(uriAu.getLastPathSegment());
             storageReference.putFile(uriAu).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -144,9 +164,10 @@ public class AddSongActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             audioUrl = uri.toString();
 
-                            StorageReference imageStorageReference = FirebaseStorage.getInstance().getReference().child("Image")
-                                    .child(uriImg.getLastPathSegment());
-                            imageStorageReference.putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            StorageReference imageStorageReference = FirebaseStorage
+                                    .getInstance().getReference().child("Image").child(uriImg.getLastPathSegment());
+                            imageStorageReference.putFile(uriImg)
+                                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     Task<Uri> imageUriTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -155,16 +176,21 @@ public class AddSongActivity extends AppCompatActivity {
                                         public void onSuccess(Uri uri) {
                                             imageUrl = uri.toString();
 
-                                            String duration = "";
-                                            MusicFiles musicFiles = new MusicFiles(audioUrl, name, artist, duration, album);
+                                            int duration = 1;
+                                            MusicFiles musicFiles = new MusicFiles(audioUrl, name, artist, duration, album, imageUrl);
                                             MediaPlayer mediaPlayer = MediaPlayer.create(AddSongActivity.this, uriAu);
-                                            duration = String.valueOf(Integer.parseInt(String.valueOf(mediaPlayer.getDuration() / 1000)));
 
                                             ref.add(musicFiles).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                 @Override
                                                 public void onSuccess(DocumentReference documentReference) {
-                                                    Toast.makeText(AddSongActivity.this, "Thêm bài hát thành công", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(
+                                                            AddSongActivity.this,
+                                                            "Thêm bài hát thành công",
+                                                            Toast.LENGTH_SHORT).show();
                                                     finish();
+                                                    Intent backToMain = new
+                                                            Intent(AddSongActivity.this, MainActivity.class);
+                                                    startActivity(backToMain);
                                                 }
                                             });
                                         }
@@ -176,6 +202,5 @@ public class AddSongActivity extends AppCompatActivity {
                 }
             });
         }
-
     }
 }

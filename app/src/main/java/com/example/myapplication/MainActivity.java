@@ -149,9 +149,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             });
         }
-
-
-        permission();
+        initViewPager();
     }
 
     @Override
@@ -163,31 +161,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    private void permission() { //Permission provide file, photos, music,...
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//    private void permission() { //Permission provide file, photos, music,...
+//        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//
+//            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+//        } else {
+//            musicFiles = getSongs(this);
+//            initViewPager();
+//        }
+//    }
 
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-        } else {
-            musicFiles = getSongs(this);
-            initViewPager();
-        }
-    }
-
-    @Override
-    // Cấp quyền getSongs để vào ViewPager, nếu allow thì sẽ được cấp nhạc từ file trong điện thoại, nếu từ chối thì không cấp nhạc từ đó
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Do what ever you want permission related
-                musicFiles = getSongs(this);
-                initViewPager();
-            } else {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
-            }
-        }
-    }
+//    @Override
+//    // Cấp quyền getSongs để vào ViewPager, nếu allow thì sẽ được cấp nhạc từ file trong điện thoại, nếu từ chối thì không cấp nhạc từ đó
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == REQUEST_CODE) {
+////            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                //Do what ever you want permission related
+//                musicFiles = getSongs(this);
+//                initViewPager();
+//            } else {
+//                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+//            }
+//        }
+//    }
 
     private void initViewPager() {
         ViewPager viewPager = findViewById(R.id.view_pager);
@@ -243,62 +241,62 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
 
-    public ArrayList<MusicFiles> getSongs(Context context) {
-        //Lấy thông tin về thứ tự sắp xếp từ SharedPreferences
-        //Tìm hiểu chức năng của SharedPrefences -> README.md trên Github
-        SharedPreferences preferences = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE);
-        String sortOrder = preferences.getString("sorting", "SortByName");
-
-        ArrayList<String> duplicate = new ArrayList<>();
-        albums.clear();
-        ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
-        String order = null;
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //Uniform Resource Identifier - Nhận diện tài nguyên thống nhất
-        //VD tài nguyên mạng như: documents, pictures, photos, audios, videos,...
-
-        //Function of sorting
-        switch (sortOrder) {
-            case "sortByName":
-                order = MediaStore.MediaColumns.DISPLAY_NAME + " ASC";
-                break;
-            case "sortByDate":
-                order = MediaStore.MediaColumns.DATE_ADDED + " ASC";
-                break;
-            case "sortBySize":
-                order = MediaStore.MediaColumns.SIZE + " DESC";
-                break;
-        }
-
-        //Mảng chỉ định các cột dữ liệu
-        String[] projection = {MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.DATA, //Data for path (đường dẫn)
-                MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media._ID};
-
-        // Truy vấn ContentResolver để lấy dữ liệu từ MediaStore
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, order);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                @SuppressLint("Range") String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
-                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
-                @SuppressLint("Range") String duration = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
-                @SuppressLint("Range") String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
-                @SuppressLint("Range") String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
-                @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
-
-                MusicFiles musicFiles = new MusicFiles(path, title, artist, duration, album);
-                //Log.e for check info music
-                Log.e(TAG, "Path:" + path + "Album: " + album);
-//                Log.e("Path: " + path, "Album" + album);
-                tempAudioList.add(musicFiles);
-
-                if (!duplicate.contains(album)) {
-                    albums.add(musicFiles);
-                    duplicate.add(album);
-                }
-            }
-            cursor.close();
-        }
-        return tempAudioList;
-    }
+//    public ArrayList<MusicFiles> getSongs(Context context) {
+//        //Lấy thông tin về thứ tự sắp xếp từ SharedPreferences
+//        //Tìm hiểu chức năng của SharedPrefences -> README.md trên Github
+//        SharedPreferences preferences = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE);
+//        String sortOrder = preferences.getString("sorting", "SortByName");
+//
+//        ArrayList<String> duplicate = new ArrayList<>();
+//        albums.clear();
+//        ArrayList<MusicFiles> tempAudioList = new ArrayList<MusicFiles>();
+//        String order = null;
+//        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI; //Uniform Resource Identifier - Nhận diện tài nguyên thống nhất
+//        //VD tài nguyên mạng như: documents, pictures, photos, audios, videos,...
+//
+//        //Function of sorting
+//        switch (sortOrder) {
+//            case "sortByName":
+//                order = MediaStore.MediaColumns.DISPLAY_NAME + " ASC";
+//                break;
+//            case "sortByDate":
+//                order = MediaStore.MediaColumns.DATE_ADDED + " ASC";
+//                break;
+//            case "sortBySize":
+//                order = MediaStore.MediaColumns.SIZE + " DESC";
+//                break;
+//        }
+//
+//        //Mảng chỉ định các cột dữ liệu
+//        String[] projection = {MediaStore.Audio.Media.ALBUM, MediaStore.Audio.Media.TITLE, MediaStore.Audio.Media.DURATION, MediaStore.Audio.Media.DATA, //Data for path (đường dẫn)
+//                MediaStore.Audio.Media.ARTIST, MediaStore.Audio.Media._ID};
+//
+//        // Truy vấn ContentResolver để lấy dữ liệu từ MediaStore
+//        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, order);
+//        if (cursor != null) {
+//            while (cursor.moveToNext()) {
+//                @SuppressLint("Range") String album = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM));
+//                @SuppressLint("Range") String title = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE));
+//                @SuppressLint("Range") int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION));
+//                @SuppressLint("Range") String path = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+//                @SuppressLint("Range") String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
+//                @SuppressLint("Range") String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
+//
+//                MusicFiles musicFiles = new MusicFiles(path, title, artist, duration, album, image);
+//                //Log.e for check info music
+//                Log.e(TAG, "Path:" + path + "Album: " + album);
+////                Log.e("Path: " + path, "Album" + album);
+//                tempAudioList.add(musicFiles);
+//
+//                if (!duplicate.contains(album)) {
+//                    albums.add(musicFiles);
+//                    duplicate.add(album);
+//                }
+//            }
+//            cursor.close();
+//        }
+//        return tempAudioList;
+//    }
 
     //26 - 02 - 2024
     //Create search option on Menu Option
@@ -336,36 +334,28 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        SharedPreferences.Editor editor = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE).edit();
-        switch (item.getItemId()) {
-            case R.id.by_name:
-                editor.putString("sorting", "sortByName");
-                editor.apply();
-                this.recreate();
-                break;
-            case R.id.by_date:
-                editor.putString("sorting", "sortByDate");
-                editor.apply();
-                this.recreate();
-                break;
-            case R.id.by_size:
-                editor.putString("sorting", "sortBySize");
-                editor.apply();
-                this.recreate();
-                break;
-        }
-
-//        int id = item.getItemId();
-//        if (id == R.id.home_info) {
-//            Intent i = new Intent(MainActivity.this, AccountInfoActivity.class);
-//            startActivity(i);
-//            return true;
+//        SharedPreferences.Editor editor = getSharedPreferences(MY_SORT_PREF, MODE_PRIVATE).edit();
+//        switch (item.getItemId()) {
+//            case R.id.by_name:
+//                editor.putString("sorting", "sortByName");
+//                editor.apply();
+//                this.recreate();
+//                break;
+//            case R.id.by_date:
+//                editor.putString("sorting", "sortByDate");
+//                editor.apply();
+//                this.recreate();
+//                break;
+//            case R.id.by_size:
+//                editor.putString("sorting", "sortBySize");
+//                editor.apply();
+//                this.recreate();
+//                break;
 //        }
 
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

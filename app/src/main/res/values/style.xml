@@ -5,5 +5,11 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
     </style>
-    
+<!--    -->
+<!--    <style name="CustomProgressBarStyle">-->
+<!--        <item name="android:indeterminateDrawable">@drawable_custom_progress_bar_drawable</item>-->
+<!--        <item name="android:color">@color/your_loading_color</item>-->
+<!--        <item name="android:progressBackgroundTint">@color/black</item>-->
+<!--    </style>-->
+
 </resources>

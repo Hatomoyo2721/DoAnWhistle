@@ -5,18 +5,22 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private String title; //Tên bài hát
     private String artist; //Tác giả
     private String album; //Album của tác giả
-    private String duration; //Thời lượng
+    private int duration; //Thời lượng
+    private String image;
+    private String id_song;
 
-    public MusicFiles(String path, String title, String artist, String duration, String album) {
+    public MusicFiles(String id_song, String path, String title, String artist, int duration, String album, String image) {
+        this.id_song = id_song;
         this.path = path;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.duration = duration;
+        this.image = image;
     }
 
     public String getPath() {
-        return path != null ? path : "";
+        return path;
     }
 
     public void setPath(String path) {
@@ -47,12 +51,28 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
         this.album = album;
     }
 
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getId_song() {
+        return id_song;
+    }
+
+    public void setId_song(String id_song) {
+        this.id_song = id_song;
     }
 
     public MusicFiles() {
