@@ -8,9 +8,11 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private int duration; //Thời lượng
     private String image;
     private String id_song;
+    private String key;
+    private static int count = 0;
 
-    public MusicFiles(String id_song, String path, String title, String artist, int duration, String album, String image) {
-        this.id_song = id_song;
+    public MusicFiles(String path, String title, String artist, int duration, String album, String image) {
+        this.id_song = "MUSIC_" + count++;
         this.path = path;
         this.title = title;
         this.artist = artist;
@@ -73,6 +75,14 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
 
     public void setId_song(String id_song) {
         this.id_song = id_song;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public MusicFiles() {

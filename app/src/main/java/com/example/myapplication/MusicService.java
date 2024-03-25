@@ -8,12 +8,9 @@ import static com.example.myapplication.PlayerActivity.listSongs;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,18 +19,14 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.util.AtomicFile;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.io.IOException;
-import java.security.Provider;
 import java.util.ArrayList;
 
 //27 - 02 - 2024
@@ -294,6 +287,14 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         }
     }
 
+    public void incrementPosition() {
+        if (position < musicFiles.size() - 1) {
+            position++;
+        } else {
+            position = 0; // Reset to the first song if at the end of the list
+        }
+    }
+
     void playPauseBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.playPauseBtnClicked();
@@ -326,4 +327,3 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         stopSelf();
     }
 }
-

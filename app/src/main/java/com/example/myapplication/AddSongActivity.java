@@ -26,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.abt.FirebaseABTesting;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -154,7 +155,7 @@ public class AddSongActivity extends AppCompatActivity {
         }
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(artist) && !TextUtils.isEmpty(singer)) {
             StorageReference storageReference = FirebaseStorage
-                    .getInstance().getReference().child("Audio").child(uriAu.getLastPathSegment());
+                    .getInstance().getReference().child("audio").child(uriAu.getLastPathSegment());
             storageReference.putFile(uriAu).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -164,8 +165,10 @@ public class AddSongActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             audioUrl = uri.toString();
 
+                            String fileName = uriImg.getLastPathSegment();
+
                             StorageReference imageStorageReference = FirebaseStorage
-                                    .getInstance().getReference().child("Image").child(uriImg.getLastPathSegment());
+                                    .getInstance().getReference().child("image").child(fileName);
                             imageStorageReference.putFile(uriImg)
                                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override

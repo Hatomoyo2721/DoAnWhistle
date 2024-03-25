@@ -13,7 +13,7 @@
         android:id="@+id/layout_top_btn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/gredient_bg"
+        android:background="#DA0B0A0A"
         android:layout_alignParentTop="true">
 
     <ImageView
@@ -112,7 +112,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/gredient_bg">
+        android:background="#DA0B0A0A">
 
         <ImageView
             android:id="@+id/shuffle"
@@ -145,7 +145,7 @@
             android:clickable="true"
             android:contentDescription="Play/Pause Button"
             app:shapeAppearance="@style/circleShape"
-            android:backgroundTint="#808080"
+            android:backgroundTint="#4A4848"
             app:borderWidth="0dp"
             />
 

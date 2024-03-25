@@ -5,13 +5,6 @@ import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
 import static com.example.myapplication.MusicAdapter.music_Files;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.palette.graphics.Palette;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,14 +13,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Image;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -38,6 +29,11 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,8 +43,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
-import java.nio.channels.InterruptedByTimeoutException;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
@@ -424,17 +418,17 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     private String formattedTime(int mCurrentPosition) {
-        String totalout = "";
-        String totalNew = "";
-        String seconds = String.valueOf(mCurrentPosition % 60);
         String minutes = String.valueOf(mCurrentPosition / 60);
-        totalout = minutes + ":" + seconds;
-        totalNew = minutes + ":" + "0" + seconds;
-        if (seconds.length() == 1) {
-            return totalNew;
-        } else {
-            return totalout;
+        String seconds = String.valueOf(mCurrentPosition % 60);
+
+        // Ensure minutes and seconds have leading zeros if necessary
+        if (minutes.length() == 1) {
+            minutes = "0" + minutes;
         }
+        if (seconds.length() == 1) {
+            seconds = "0" + seconds;
+        }
+        return minutes + ":" + seconds;
     }
 
     private void getIntentMethod() {
@@ -458,9 +452,10 @@ public class PlayerActivity extends AppCompatActivity
     }
 
     private void getSongDetailsFromFirestore(int position) {
+        String path = listSongs.get(position).getPath().replace("//", "/");
         DocumentReference docRef = FirebaseFirestore.getInstance()
                 .collection("music")
-                .document(listSongs.get(position).getPath());
+                .document(path);
 
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -490,11 +485,16 @@ public class PlayerActivity extends AppCompatActivity
         });
     }
 
-    private void metaData(Uri uri) {
+    private void metaData(Uri uri) throws IOException {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
-        int durationTotal = listSongs.get(position).getDuration() / 1000;
-        duration_finished.setText(formattedTime(durationTotal));
+
+        int durationInMilis = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+
+        int durationInSeconds = durationInMilis / 1000;
+        String durationFormatted = formattedTime(durationInSeconds);
+        duration_finished.setText(durationFormatted);
+
         byte[] art = retriever.getEmbeddedPicture();
         Bitmap bitmap;
         if (art != null) {
@@ -547,8 +547,8 @@ public class PlayerActivity extends AppCompatActivity
 
             ImageView gredient = findViewById(R.id.imageViewGredient);
             RelativeLayout mContainer = findViewById(R.id.container);
-            gredient.setBackgroundResource(R.drawable.gredient_bg);
-            mContainer.setBackgroundResource(R.drawable.main_bg);
+//            gredient.setBackgroundResource(R.drawable.gredient_bg);
+//            mContainer.setBackgroundResource(R.drawable.main_bg);
 
             song_name.setTextColor(Color.WHITE);
             artist_name.setTextColor(Color.DKGRAY);

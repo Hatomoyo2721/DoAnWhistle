@@ -1,27 +1,16 @@
 package com.example.myapplication;
 
-import static com.example.myapplication.MainActivity.albums;
-import static com.example.myapplication.MainActivity.musicFiles;
-import static com.example.myapplication.MusicAdapter.music_Files;
-
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SongsFragment extends Fragment {
     public static MusicAdapter musicAdapter;
@@ -46,11 +34,7 @@ public class SongsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_songs, container, false);
         recyclerView = v.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-//        if (!(musicFiles.isEmpty())) { //musicFiles = variable from MainActivity, using import to get it!!
-//            musicAdapter = new MusicAdapter(getContext(), musicFiles);
-//            recyclerView.setAdapter(musicAdapter);
-//            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
-//        }
+
         return v;
     }
 
