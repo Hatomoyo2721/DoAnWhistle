@@ -45,7 +45,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.file_Name.setText(music_Files.get(position).getTitle());
 
-        loadAlbumArtFromFirestore(music_Files.get(position).getImage(), holder.album_Art);
+        loadImageSongFromFirestore(music_Files.get(position).getImage(), holder.image_art);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,23 +65,24 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     //Lưu trữ các thành phần UI (User interface) cho mỗi mục trong list: file + ảnh album
     public class viewHolder extends RecyclerView.ViewHolder {
         TextView file_Name;
-        ImageView album_Art, menuMore;
+        ImageView image_art, menuMore;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
             file_Name = itemView.findViewById(R.id.music_file_name);
-            album_Art = itemView.findViewById(R.id.music_img);
+            image_art = itemView.findViewById(R.id.music_img);
             menuMore = itemView.findViewById(R.id.menuMore);
         }
     }
 
 
-    private void loadAlbumArtFromFirestore(String imageId, ImageView imageView) {
-        imageId = imageId.replaceAll("//", "/");
-        db.collection("music").document(imageId).get().addOnSuccessListener(documentSnapshot -> {
+    private void loadImageSongFromFirestore(String image, ImageView imageView) {
+        image = image.replace("//", "/");
+
+        db.collection("music").document(image).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 String imageUrl = documentSnapshot.getString("image");
-                if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (imageUrl != null) {
                     // Load image using Glide
                     Glide.with(music_Context).load(imageUrl).into(imageView);
                 } else {
