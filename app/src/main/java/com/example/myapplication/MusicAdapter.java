@@ -1,18 +1,27 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
@@ -24,12 +33,14 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     static ArrayList<MusicFiles> music_Files;
     FirebaseFirestore db;
     FirebaseStorage storage;
+    FirebaseAuth firebaseAuth;
 
     MusicAdapter(Context music_Context, ArrayList<MusicFiles> music_Files) {
         this.music_Files = music_Files;
         this.music_Context = music_Context;
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
     }
 
     @NonNull
@@ -45,7 +56,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     public void onBindViewHolder(@NonNull viewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.file_Name.setText(music_Files.get(position).getTitle());
 
-        loadImageSongFromFirestore(music_Files.get(position).getImage(), holder.image_art);
+        loadImageSongFromFirestore(holder.image_art, position);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +64,17 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
                 Intent i = new Intent(music_Context, PlayerActivity.class);
                 i.putExtra("position", position);
                 music_Context.startActivity(i);
+            }
+        });
+
+        holder.menuMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(music_Context);
+                builder.setMessage("Bạn có muốn xóa bài này ?").setPositiveButton("Xác nhận", (dialog, which) -> {
+                            deleteMusicFromFirebase(position);
+                        })
+                        .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss()).create().show();
             }
         });
     }
@@ -64,8 +86,9 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
 
     //Lưu trữ các thành phần UI (User interface) cho mỗi mục trong list: file + ảnh album
     public class viewHolder extends RecyclerView.ViewHolder {
+        public ImageView image_art;
         TextView file_Name;
-        ImageView image_art, menuMore;
+        ImageView menuMore;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -76,24 +99,42 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     }
 
 
-    private void loadImageSongFromFirestore(String image, ImageView imageView) {
-        image = image.replace("//", "/");
-
-        db.collection("music").document(image).get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                String imageUrl = documentSnapshot.getString("image");
-                if (imageUrl != null) {
-                    // Load image using Glide
-                    Glide.with(music_Context).load(imageUrl).into(imageView);
-                } else {
-                    imageView.setImageResource(R.drawable.question_mark);
+    private void loadImageSongFromFirestore(ImageView imageView, int position) {
+        DocumentReference documentReference = db.collection("music").document(music_Files.get(position).getId_song());
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        String image = document.get("image").toString().replace("//", "/");
+                        if (image != null) {
+                            Glide.with(music_Context).load(image).into(imageView);
+                        } else {
+                            Glide.with(music_Context).load(R.drawable.question_mark).into(imageView);
+                        }
+                    }
                 }
-            } else {
-                imageView.setImageResource(R.drawable.question_mark);
             }
-        }).addOnFailureListener(e -> {
-            imageView.setImageResource(R.drawable.question_mark);
-            e.printStackTrace();
+        });
+    }
+
+    private void deleteMusicFromFirebase(int position) {
+        String musicPath = music_Files.get(position).getPath();
+        db.collection("music").document(musicPath).delete().addOnSuccessListener(unused -> {
+            Log.d("MusicAdapter", "Đã xóa nhạc");
+
+            music_Files.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, music_Files.size());
+
+            Toast.makeText(music_Context, "Xóa thành công", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(music_Context, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                Log.e("MusicAdapter", "Error deleting music: " + e.getMessage());
+            }
         });
     }
 

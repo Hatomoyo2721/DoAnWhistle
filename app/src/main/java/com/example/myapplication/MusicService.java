@@ -4,7 +4,6 @@ import static com.example.myapplication.ApplicationClass.ACTION_NEXT;
 import static com.example.myapplication.ApplicationClass.ACTION_PLAY;
 import static com.example.myapplication.ApplicationClass.ACTION_PREVIOUS;
 import static com.example.myapplication.ApplicationClass.CHANNEL_ID;
-import static com.example.myapplication.PlayerActivity.listSongs;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -12,9 +11,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -44,9 +40,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     public static final String MUSIC_FILE = "STORED_MUSIC";
     public static final String ARTIST_NAME = "ARTIST NAME";
     public static final String SONG_NAME = "SONG NAME";
-    public static final String ACTION_PLAY_PAUSE_MS = "com.example.myapplication.ACTION_PLAY_PAUSE";
-    public static final String ACTION_NEXT_MS = "com.example.myapplication.ACTION_NEXT";
-    public static final String ACTION_PREVIOUS_MS = "com.example.myapplication.ACTION_PREVIOUS";
 
     @Override
     public void onCreate() {
@@ -112,7 +105,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     }
 
     private void playMedia(int StartPosition) {
-        musicFiles = listSongs;
+        musicFiles = PlayerActivity.listSongs;
         position = StartPosition;
         if (mediaPlayer != null) {
             mediaPlayer.stop();
@@ -182,19 +175,13 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
     void OnCompleted() {
         mediaPlayer.setOnCompletionListener(this);
+
     }
 
-
-    // 3 / 3 / 2024
     @Override
     public void onCompletion(MediaPlayer mp) {
         if (actionPlaying != null) {
             actionPlaying.nextBtnClicked();
-//            if (mediaPlayer != null) {
-//                createMediaPlayer(position);
-//                mediaPlayer.start();
-//                OnCompleted();
-//            }
             if (position < musicFiles.size()) {
                 createMediaPlayer(position);
                 mediaPlayer.start();
@@ -241,21 +228,15 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                 getBroadcast(this, 0, nextIntent,
                         PendingIntent.FLAG_IMMUTABLE);
 
-        byte[] picture = getAlbumArt(musicFiles.get(position).getPath());
-        Bitmap thumb = null;
-        if (picture != null) {
-            thumb = BitmapFactory.decodeByteArray(picture, 0, picture.length);
-        } else {
-            thumb = BitmapFactory.decodeResource(getResources(), R.drawable.question_mark);
-        }
-
         mediaSessionCompat = new MediaSessionCompat(this, "tag");
+
+//        String image = PlayerActivity.listSongs.get(position).getImage().replace("//", "/");
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_small_music)
                 .setContentTitle(musicFiles.get(position).getTitle())
                 .setContentText(musicFiles.get(position).getArtist())
-                .setLargeIcon(thumb)
+//                .setLargeIcon(image != null ? BitmapFactory.decodeFile(image) : null)
                 .addAction(R.drawable.baseline_skip_previous, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.baseline_skip_next, "Next", nextPending)
@@ -266,59 +247,24 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         NotificationManagerCompat mangerCompat = NotificationManagerCompat.from(this);
         mangerCompat.notify(NOTIFICATION_ID, notification);
-//        startForeground(NOTIFICATION_ID, notification);
-    }
-
-    private byte[] getAlbumArt(String s) throws IOException {
-        try {
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(s);
-            byte[] art = retriever.getEmbeddedPicture();
-            retriever.release();
-
-            if (art != null) {
-                return art;
-            }
-            return null;
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void incrementPosition() {
-        if (position < musicFiles.size() - 1) {
-            position++;
-        } else {
-            position = 0; // Reset to the first song if at the end of the list
-        }
     }
 
     void playPauseBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.playPauseBtnClicked();
-            sendBroadCast(String.valueOf(new Intent(ACTION_PLAY_PAUSE_MS)));
         }
     }
 
     void previousBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.prevBtnClicked();
-            sendBroadCast(String.valueOf(new Intent(ACTION_PREVIOUS_MS)));
         }
     }
 
     void nextBtnClicked() {
         if (actionPlaying != null) {
             actionPlaying.nextBtnClicked();
-            sendBroadCast(String.valueOf(new Intent(ACTION_NEXT_MS)));
         }
-    }
-
-    private void sendBroadCast(String action) {
-        Intent intent = new Intent(action);
-        sendBroadcast(intent);
     }
 
     @Override

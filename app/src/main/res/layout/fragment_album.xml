@@ -9,7 +9,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#BF000000"
+        android:background="@drawable/song_background"
         />
 
 </RelativeLayout>

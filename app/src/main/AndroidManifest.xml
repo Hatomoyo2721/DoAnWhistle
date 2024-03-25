@@ -47,12 +47,12 @@
 
         <activity
             android:name=".PlayerActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="Music App"/>
+            android:label="Crashtify"/>
 
         <service
             android:name=".MusicService"
@@ -70,7 +70,7 @@
                 <action android:name="PLAY" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".NowPlayingFragmentBottom" />
+<!--        <receiver android:name=".NowPlayingFragmentBottom" />-->
     </application>
 
 </manifest>

@@ -88,4 +88,3 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     public MusicFiles() {
     } ///Create object with empty attribute!!
 }
-

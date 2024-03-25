@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/container"
-    android:background="@drawable/main_bg"
+    android:background="@drawable/music_player_background"
     android:orientation="vertical"
-    tools:context=".PlayerActivity">
+    tools:context=".com.example.myapplication.PlayerActivity">
 
     <RelativeLayout
         android:id="@+id/layout_top_btn"
@@ -47,10 +47,10 @@
         
         <ImageView
             android:id="@+id/cover_art"
-            android:layout_width="400dp"
-            android:layout_height="400dp"
+            android:layout_width="320dp"
+            android:layout_height="320dp"
             android:scaleType="centerCrop"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
         
         <ImageView
             android:id="@+id/imageViewGredient"
@@ -68,25 +68,25 @@
         android:layout_below="@id/card"
         android:textColor="@color/white"
         android:gravity="center_horizontal"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:singleLine="true"
         android:ellipsize="end"
         android:layout_marginStart="18dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         />
 
     <ImageButton
         android:id="@+id/btn_favourite_player"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignBottom="@+id/card"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="17dp"
-        android:layout_marginBottom="-35dp"
+        android:layout_marginBottom="-55dp"
         android:background="@null"
-        android:src="@drawable/baseline_no_favorite_border"
+        android:src="@drawable/baseline_playlist_add_circle"
         app:tint="#fff" />
 
     <TextView
@@ -97,7 +97,7 @@
         android:layout_below="@id/song_name"
         android:textColor="@color/white"
         android:gravity="center_horizontal"
-        android:textSize="13sp"
+        android:textSize="14sp"
         android:singleLine="true"
         android:ellipsize="end"
         android:layout_marginStart="18dp"
@@ -108,7 +108,7 @@
     <RelativeLayout
         android:id="@+id/layout_bottom"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="70dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -145,7 +145,7 @@
             android:clickable="true"
             android:contentDescription="Play/Pause Button"
             app:shapeAppearance="@style/circleShape"
-            android:backgroundTint="#4A4848"
+            android:backgroundTint="@color/white"
             app:borderWidth="0dp"
             />
 
@@ -175,7 +175,7 @@
         android:id="@+id/seek_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="45dp"
         android:layout_above="@id/layout_bottom">
 
         <TextView

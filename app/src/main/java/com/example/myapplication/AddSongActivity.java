@@ -2,7 +2,6 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,22 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.abt.FirebaseABTesting;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,7 +27,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class AddSongActivity extends AppCompatActivity {
@@ -45,7 +37,6 @@ public class AddSongActivity extends AppCompatActivity {
     Uri uriAu, uriImg;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference ref = db.collection("music");
-    ProgressBar progressBar;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -63,7 +54,6 @@ public class AddSongActivity extends AppCompatActivity {
         uploadFile = findViewById(R.id.btnSelectFile);
         uploadImage = findViewById(R.id.btnSelectImage);
         selectedImage = findViewById(R.id.selected_image);
-        progressBar = findViewById(R.id.loading_progress);
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
@@ -165,7 +155,7 @@ public class AddSongActivity extends AppCompatActivity {
                         public void onSuccess(Uri uri) {
                             audioUrl = uri.toString();
 
-                            String fileName = uriImg.getLastPathSegment();
+                            String fileName = uriImg.getPath();
 
                             StorageReference imageStorageReference = FirebaseStorage
                                     .getInstance().getReference().child("image").child(fileName);

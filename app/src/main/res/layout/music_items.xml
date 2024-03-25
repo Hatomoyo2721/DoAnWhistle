@@ -27,17 +27,6 @@
         android:textColor="#FFFFFF"
         />
 
-    <ImageButton
-        android:id="@+id/btn_favourite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:src="@drawable/baseline_no_favorite_border"
-        android:scaleType="center"
-        app:tint="#FFF"
-        android:layout_toStartOf="@id/menuMore"
-        android:layout_centerVertical="true"/>
-
     <ImageView
         android:id="@+id/menuMore"
         android:layout_width="60dp"

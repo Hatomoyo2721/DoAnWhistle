@@ -52,7 +52,7 @@ public class SongsFragment extends Fragment {
                     Log.e("Firestore", "Error listening to collection changes", e);
                     return;
                 }
-
+                
                 if (querySnapshot != null) {
                     ArrayList<MusicFiles> songs = new ArrayList<>();
                     for (DocumentSnapshot document : querySnapshot.getDocuments()) {
