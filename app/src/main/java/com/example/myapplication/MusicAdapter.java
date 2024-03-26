@@ -17,13 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -120,22 +120,25 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     }
 
     private void deleteMusicFromFirebase(int position) {
-        String musicPath = music_Files.get(position).getPath();
-        db.collection("music").document(musicPath).delete().addOnSuccessListener(unused -> {
-            Log.d("MusicAdapter", "Đã xóa nhạc");
-
-            music_Files.remove(position);
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, music_Files.size());
-
-            Toast.makeText(music_Context, "Xóa thành công", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(music_Context, "Xóa thất bại", Toast.LENGTH_SHORT).show();
-                Log.e("MusicAdapter", "Error deleting music: " + e.getMessage());
-            }
-        });
+        String titleSong = music_Files.get(position).getPath().replace("//", "/");
+        DocumentReference documentReference = FirebaseFirestore.getInstance().document("music/" + titleSong);
+        StorageReference storageReference = storage.getReferenceFromUrl(music_Files.get(position).getPath());
+        documentReference.delete()
+                .addOnSuccessListener(unused -> {
+                    Log.d("MusicAdapter", "Firestore music doc deleted");
+                })
+                .addOnFailureListener(e -> Log.w("MusicAdapter", "Firestore music doc deletion failed", e));
+        storageReference.delete().addOnSuccessListener(unused -> {
+                    Log.d("MusicAdapter", "Music file deleted from storage");
+                    music_Files.remove(position);
+                    notifyItemRemoved(position);
+                    notifyItemRangeChanged(position, music_Files.size());
+                    Toast.makeText(music_Context, "Xóa thành công", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("MusicAdapter", "Music file deletion failed", e);
+                    Toast.makeText(music_Context, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                });
     }
 
     void updateList(ArrayList<MusicFiles> musicFilesArrayList) {
