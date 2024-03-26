@@ -32,7 +32,7 @@ public class AlbumFragment extends Fragment {
 
         ArrayList<MusicFiles> albumsToShow = new ArrayList<>();
         for (MusicFiles album : albums) {
-            if (getNumberOfSongsInAlbum(album.getAlbum()) >= 3) {
+            if (getNumberOfSongsInAlbum(album.getAlbum()) >= 2) {
                 albumsToShow.add(album);
             }
         }

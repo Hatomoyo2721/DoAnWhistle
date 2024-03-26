@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 @SuppressLint("Range")String artist = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST));
                 @SuppressLint("Range")String id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID));
 
-                MusicFiles musicFiles = new MusicFiles(path, title, artist, album, duration, id);
+                MusicFiles musicFiles = new MusicFiles(path, title, artist, Integer.parseInt(duration), album, id);
                 //Log.e for check info music
                 Log.e(TAG, "Path:" + path + "Album: " + album);
                 tempAudioList.add(musicFiles);
@@ -334,8 +334,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return true;
     }
 
-
-    //27 - 02 - 2024
     //Create menu for sorting songs
     @SuppressLint("NonConstantResourceId")
     @Override

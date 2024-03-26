@@ -1,5 +1,6 @@
 package com.example.myapplication.LoginReg;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.myapplication.MusicService;
+import com.example.myapplication.AddSongActivity;
 import com.example.myapplication.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +29,6 @@ public class AccountInfoActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseFirestore firestore;
     String UserID;
-    MusicService musicService;
     final String USER_DATA_KEY = "user_data";
 
     @Override
@@ -82,8 +82,8 @@ public class AccountInfoActivity extends AppCompatActivity {
         userAddSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(AccountInfoActivity.this, AddSongActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(AccountInfoActivity.this, AddSongActivity.class);
+                startActivity(intent);
             }
         });
     }

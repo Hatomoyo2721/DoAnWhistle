@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaMetadata;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -156,7 +155,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
         }
     }
 
-    //26 - 02 - 2024
     void updateList(ArrayList<MusicFiles> musicFilesArrayList) {
         music_Files = new ArrayList<>();
         music_Files.addAll(musicFilesArrayList);

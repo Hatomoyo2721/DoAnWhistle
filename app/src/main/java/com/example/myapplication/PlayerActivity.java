@@ -467,7 +467,7 @@ public class PlayerActivity extends AppCompatActivity
     private void metaData(Uri uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
-        int durationTotal = Integer.parseInt(listSongs.get(position).getDuration()) / 1000;
+        int durationTotal = listSongs.get(position).getDuration() / 1000;
         duration_finished.setText(formattedTime(durationTotal));
         byte[] art = retriever.getEmbeddedPicture();
         Bitmap bitmap;

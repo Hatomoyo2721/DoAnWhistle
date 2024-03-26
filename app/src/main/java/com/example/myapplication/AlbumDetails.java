@@ -5,6 +5,7 @@ import static com.example.myapplication.MainActivity.musicFiles;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ public class AlbumDetails extends AppCompatActivity {
     RecyclerView recyclerView;
     ImageView albumPhoto;
     String albumName;
+    Button btn_back;
     ArrayList<MusicFiles> albumSongs = new ArrayList<>();
     AlbumDetailsAdapter albumDetailsAdapter;
     @Override
@@ -29,7 +31,15 @@ public class AlbumDetails extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         albumPhoto = findViewById(R.id.albumPhoto);
+        btn_back = findViewById(R.id.album_btn_back);
         albumName = getIntent().getStringExtra("albumName");
+
+        btn_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         int j = 0;
         for (int i = 0; i < musicFiles.size(); i++) {
@@ -71,7 +81,7 @@ public class AlbumDetails extends AppCompatActivity {
             }
         }
 
-        if (tempAlbumSongs.size() >= 3) {
+        if (tempAlbumSongs.size() > 1) {
             albumSongs.clear();
             albumSongs.addAll(tempAlbumSongs);
             albumDetailsAdapter = new AlbumDetailsAdapter(this, albumSongs);
@@ -81,7 +91,6 @@ public class AlbumDetails extends AppCompatActivity {
             recyclerView.setVisibility(View.VISIBLE);
             albumPhoto.setVisibility(View.VISIBLE);
         } else {
-            // Nếu không đủ 3 bài hát, ẩn album và bài hát
             recyclerView.setVisibility(View.GONE);
             albumPhoto.setVisibility(View.GONE);
         }

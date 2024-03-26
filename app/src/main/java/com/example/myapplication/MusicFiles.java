@@ -5,10 +5,21 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private String title; //Tên bài hát
     private String artist; //Tác giả
     private String album; //Album của tác giả
-    private String duration; //Thời lượng
+    private int duration; //Thời lượng
+    private String image;
     private String id;
+    private String key;
 
-    public MusicFiles(String path, String title, String artist, String album, String duration, String id) {
+    public MusicFiles(String path, String title, String artist, int duration, String album, String image) {
+        this.path = path;
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+        this.duration = duration;
+        this.image = image;
+    }
+
+    public MusicFiles(String path, String title, String artist, String album, int duration, String id) {
         this.path = path;
         this.title = title;
         this.artist = artist;
@@ -41,11 +52,26 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     public void setAlbum(String album) {
         this.album = album;
     }
-    public String getDuration() {
+    public int getDuration() {
         return duration;
     }
-    public void setDuration(String duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public MusicFiles() {} ///Create object with empty attribute!!

@@ -11,6 +11,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
@@ -230,13 +233,19 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         mediaSessionCompat = new MediaSessionCompat(this, "tag");
 
-//        String image = PlayerActivity.listSongs.get(position).getImage().replace("//", "/");
+        byte[] picture = getAlbumArt(musicFiles.get(position).getPath());
+        Bitmap thumb = null;
+        if (picture != null) {
+            thumb = BitmapFactory.decodeByteArray(picture, 0, picture.length);
+        } else {
+            thumb = BitmapFactory.decodeResource(getResources(), R.drawable.question_mark);
+        }
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.baseline_small_music)
                 .setContentTitle(musicFiles.get(position).getTitle())
                 .setContentText(musicFiles.get(position).getArtist())
-//                .setLargeIcon(image != null ? BitmapFactory.decodeFile(image) : null)
+                .setLargeIcon(thumb)
                 .addAction(R.drawable.baseline_skip_previous, "Previous", prevPending)
                 .addAction(playPauseBtn, "Pause", pausePending)
                 .addAction(R.drawable.baseline_skip_next, "Next", nextPending)
@@ -247,6 +256,24 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         NotificationManagerCompat mangerCompat = NotificationManagerCompat.from(this);
         mangerCompat.notify(NOTIFICATION_ID, notification);
+    }
+
+    private byte[] getAlbumArt(String s) throws IOException {
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(s);
+            byte[] art = retriever.getEmbeddedPicture();
+            retriever.release();
+
+            if (art != null) {
+                return art;
+            }
+            return null;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     void playPauseBtnClicked() {

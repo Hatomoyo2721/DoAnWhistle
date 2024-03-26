@@ -57,7 +57,7 @@ public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapte
                     .load(R.drawable.question_mark)
                     .into(holder.album_image);
         }
-        //25 - 02 - 2024: Tạo onClick để chạy Activity qua hàm getIntentMethod ở PlayerActivity.java
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -8,6 +8,15 @@
     android:background="#D8000000"
     tools:context=".AlbumDetails">
 
+    <Button
+        android:id="@+id/album_btn_back"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:background="@drawable/baseline_arrow_white"
+        />
+
     <ImageView
         android:id="@+id/albumPhoto"
         android:layout_width="match_parent"
