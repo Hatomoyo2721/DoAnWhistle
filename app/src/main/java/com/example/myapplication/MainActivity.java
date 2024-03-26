@@ -92,8 +92,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             Intent intent = new Intent(MainActivity.this, AccountInfoActivity.class);
                             startActivity(intent);
                             break;
-                        }
-                        else {
+                        } else {
                             Toast.makeText(MainActivity.this, "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show();
                         }
                     case R.id.list_favourite_songs:
@@ -233,66 +232,104 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchSongs(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                String userInput = newText.toLowerCase();
-                if (SongsFragment.musicAdapter != null) {
-                    ArrayList<MusicFiles> searchResult = new ArrayList<>();
-                    for (MusicFiles song : MainActivity.musicFiles) {
-                        if (song.getTitle().toLowerCase().contains(userInput)) {
-                            searchResult.add(song);
-                        }
+                if (newText.isEmpty()) {
+                    if (SongsFragment.musicAdapter != null) {
+                        SongsFragment.musicAdapter.updateList(musicFiles);
                     }
-                    SongsFragment.musicAdapter.updateList(searchResult);
+                    return true;
                 }
+
+                searchSongs(newText);
                 return true;
             }
         });
         return true;
     }
 
+    private void searchSongs(String query) {
+        if (query.length() > 0) {
+            firestore.collection("music")
+                    .orderBy("title")
+                    .startAt(query.toLowerCase())
+                    .endAt(query.toLowerCase() + "\uf8ff")
+                    .get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        ArrayList<MusicFiles> searchResult = new ArrayList<>();
+
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            MusicFiles musicFile = documentSnapshot.toObject(MusicFiles.class);
+                            searchResult.add(musicFile);
+                        }
+
+                        if (musicFiles != null && SongsFragment.musicAdapter != null) {
+                            SongsFragment.musicAdapter.updateList(searchResult);
+                        }
+
+                        if (searchResult.isEmpty()) {
+                            Toast.makeText(MainActivity.this, "Không tìm thấy bài hát", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        }
+    }
+
     @Override
     public boolean onQueryTextSubmit(String query) {
+        searchSongs(query);
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        String userInput = newText;
-
-        if (userInput.isEmpty()) {
-            if (SongsFragment.musicAdapter != null) {
+        if (newText.isEmpty()) {
+            if (musicFiles != null && SongsFragment.musicAdapter != null) {
                 SongsFragment.musicAdapter.updateList(musicFiles);
             }
             return true;
         }
 
-        firebaseFirestore.collection("music")
-                .whereEqualTo("title", userInput)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<MusicFiles> searchResult = new ArrayList<>();
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        MusicFiles musicFile = documentSnapshot.toObject(MusicFiles.class);
-                        searchResult.add(musicFile);
-                    }
-
-                    if (SongsFragment.musicAdapter != null) {
-                        SongsFragment.musicAdapter.updateList(searchResult);
-                    }
-
-                    if (searchResult.isEmpty()) {
-                        Toast.makeText(MainActivity.this, "Không tìm thấy bài hát", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+        searchSongs(newText);
         return true;
+//        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+//        String userInput = newText;
+//
+//        if (userInput.isEmpty()) {
+//            if (SongsFragment.musicAdapter != null) {
+//                SongsFragment.musicAdapter.updateList(musicFiles);
+//            }
+//            return true;
+//        }
+//
+//        firebaseFirestore.collection("music")
+//                .whereEqualTo("title", userInput)
+//                .get()
+//                .addOnSuccessListener(queryDocumentSnapshots -> {
+//                    ArrayList<MusicFiles> searchResult = new ArrayList<>();
+//                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+//                        MusicFiles musicFile = documentSnapshot.toObject(MusicFiles.class);
+//                        searchResult.add(musicFile);
+//                    }
+//
+//                    if (SongsFragment.musicAdapter != null) {
+//                        SongsFragment.musicAdapter.updateList(searchResult);
+//                    }
+//
+//                    if (searchResult.isEmpty()) {
+//                        Toast.makeText(MainActivity.this, "Không tìm thấy bài hát", Toast.LENGTH_SHORT).show();
+//                    }
+//                })
+//                .addOnFailureListener(e -> {
+//                    Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+//                });
+//        return true;
     }
 
 
