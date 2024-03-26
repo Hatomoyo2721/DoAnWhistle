@@ -7,7 +7,7 @@
     android:id="@+id/container"
     android:background="@drawable/music_player_background"
     android:orientation="vertical"
-    tools:context=".com.example.myapplication.PlayerActivity">
+    tools:context=".PlayerActivity">
 
     <RelativeLayout
         android:id="@+id/layout_top_btn"
