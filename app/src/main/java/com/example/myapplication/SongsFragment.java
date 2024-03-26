@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import static com.example.myapplication.MainActivity.musicFiles;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,16 +36,18 @@ public class SongsFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_songs, container, false);
         recyclerView = v.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-
-
-
+        if (!(musicFiles.size() < 1)) { //musicFiles = variable from MainActivity, using import to get it!!
+            musicAdapter = new MusicAdapter(getContext(), musicFiles);
+            recyclerView.setAdapter(musicAdapter);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        }
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        GetSongsFromFirestore();
+//        GetSongsFromFirestore();
     }
 
     private void GetSongsFromFirestore() {

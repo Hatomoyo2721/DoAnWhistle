@@ -45,7 +45,7 @@
         android:layout_height="350dp"
         android:layout_below="@id/layout_top_btn">
         
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/cover_art"
             android:layout_width="320dp"
             android:layout_height="320dp"
@@ -78,7 +78,7 @@
         />
 
     <ImageButton
-        android:id="@+id/btn_favourite_player"
+        android:id="@+id/btn_favourite_songs"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignBottom="@+id/card"

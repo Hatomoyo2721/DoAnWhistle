@@ -1,53 +1,25 @@
 package com.example.myapplication.LoginReg;
 
-import static android.app.PendingIntent.getActivity;
-
-import static com.example.myapplication.R.string.user_data_key;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.example.myapplication.AddSongActivity;
-import com.example.myapplication.MainActivity;
 import com.example.myapplication.MusicService;
 import com.example.myapplication.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.rpc.Help;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class AccountInfoActivity extends AppCompatActivity {
@@ -110,8 +82,8 @@ public class AccountInfoActivity extends AppCompatActivity {
         userAddSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AccountInfoActivity.this, AddSongActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(AccountInfoActivity.this, AddSongActivity.class);
+//                startActivity(intent);
             }
         });
     }

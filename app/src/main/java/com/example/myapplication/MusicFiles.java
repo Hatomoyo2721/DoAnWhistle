@@ -5,86 +5,56 @@ public class MusicFiles { //Khởi tạo class lấy thông tin của một audi
     private String title; //Tên bài hát
     private String artist; //Tác giả
     private String album; //Album của tác giả
-    private int duration; //Thời lượng
-    private String image;
-    private String id_song;
-    private String key;
-    private static int count = 0;
+    private String duration; //Thời lượng
+    private String id;
 
-    public MusicFiles(String path, String title, String artist, int duration, String album, String image) {
-        this.id_song = "MUSIC_" + count++;
+    public MusicFiles(String path, String title, String artist, String album, String duration, String id) {
         this.path = path;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.duration = duration;
-        this.image = image;
+        this.id = id;
     }
 
     public String getPath() {
-        return path;
+        return path != null ? path : "";
     }
-
     public void setPath(String path) {
         this.path = path;
     }
-
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
-
     public String getArtist() {
         return artist;
     }
-
     public void setArtist(String artist) {
         this.artist = artist;
     }
-
     public String getAlbum() {
         return album;
     }
-
     public void setAlbum(String album) {
         this.album = album;
     }
-
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
-
-    public void setDuration(int duration) {
+    public void setDuration(String duration) {
         this.duration = duration;
     }
 
-    public String getImage() {
-        return image;
+    public MusicFiles() {} ///Create object with empty attribute!!
+
+    public String getId() {
+        return id;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setId(String id) {
+        this.id = id;
     }
-
-    public String getId_song() {
-        return id_song;
-    }
-
-    public void setId_song(String id_song) {
-        this.id_song = id_song;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public MusicFiles() {
-    } ///Create object with empty attribute!!
 }

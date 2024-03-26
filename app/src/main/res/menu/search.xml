@@ -29,19 +29,19 @@
 
         <menu>
             <item
-                android:id="@+id/by_default"
-                android:title="Mặc định"
-                app:showAsAction="never" />
+                android:id="@+id/by_name"
+                android:title="Tên"
+                app:showAsAction="never"/>
 
             <item
-                android:id="@+id/by_song"
-                android:title="Tên bài hát"
-                app:showAsAction="never" />
+                android:id="@+id/by_date"
+                android:title="Ngày"
+                app:showAsAction="never"/>
 
             <item
-                android:id="@+id/by_artist"
-                android:title="Tên ca sĩ"
-                app:showAsAction="never" />
+                android:id="@+id/by_size"
+                android:title="Thời lượng"
+                app:showAsAction="never"/>
 
         </menu>
 

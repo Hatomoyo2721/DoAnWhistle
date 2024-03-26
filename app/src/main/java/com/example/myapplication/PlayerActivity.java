@@ -5,44 +5,54 @@ import static com.example.myapplication.MainActivity.repeatBoolean;
 import static com.example.myapplication.MainActivity.shuffleBoolean;
 import static com.example.myapplication.MusicAdapter.music_Files;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class PlayerActivity extends AppCompatActivity
         implements ActionPlaying, ServiceConnection {
 
     private TextView song_name, artist_name, duration_played, duration_finished;
-    private ImageView back_btn, next_btn, prev_btn, shuffle_btn, repeat_btn, cover_art;
+    private ImageView back_btn, next_btn, prev_btn, shuffle_btn, repeat_btn;
+    private CircleImageView cover_art;
     private FloatingActionButton play_pause_btn;
     private SeekBar seekBar;
     private int position = -1;
@@ -53,6 +63,8 @@ public class PlayerActivity extends AppCompatActivity
     private Thread playThread, prevThread, nextThread; //Xử lý sự kiện: Play/Pause, Previous, Next
     MusicService musicService;
     ServiceConnection serviceConnection;
+    LinearLayout layout;
+    ObjectAnimator objectAnimator;
 
     //Thiết lập giao diện người dùng và gọi các phương thức khởi tạo khác
     private void initViews() {
@@ -89,9 +101,15 @@ public class PlayerActivity extends AppCompatActivity
         setFullScreen();
         setContentView(R.layout.activity_player);
         Objects.requireNonNull(getSupportActionBar()).hide();
-
         initViews(); //Ánh xạ
         getIntentMethod();
+
+        objectAnimator = objectAnimator.ofFloat(cover_art, "rotation", 0f, 360f);
+        objectAnimator.setDuration(30000);
+        objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        objectAnimator.setRepeatMode(ValueAnimator.RESTART);
+        objectAnimator.setInterpolator(new LinearInterpolator());
+        objectAnimator.start();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override //Cho người dùng thay đổi thời gian của nhạc đang phát
@@ -196,19 +214,17 @@ public class PlayerActivity extends AppCompatActivity
 
                 if (shuffleBoolean && !repeatBoolean) {
                     position = getRandom(listSongs.size() - 1);
-                } else {
+                } else if (!shuffleBoolean && !repeatBoolean) {
                     position = position > 0 ? position - 1 : listSongs.size() - 1;
+                } else if (prev_btn.isClickable()) {
+                    position = getRandom(listSongs.size() - 1);
                 }
 
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
                 metaData(uri);
-
                 song_name.setText(listSongs.get(position).getTitle());
                 artist_name.setText(listSongs.get(position).getArtist());
-                cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
-
-                musicService.start();
 
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -221,13 +237,10 @@ public class PlayerActivity extends AppCompatActivity
                         handler.postDelayed(this, 1000);
                     }
                 });
-
                 musicService.OnCompleted();
                 musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
-
                 musicService.start();
-
             } else {
                 musicService.stop();
                 musicService.release();
@@ -241,12 +254,8 @@ public class PlayerActivity extends AppCompatActivity
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
                 metaData(uri);
-
                 song_name.setText(listSongs.get(position).getTitle());
                 artist_name.setText(listSongs.get(position).getArtist());
-                cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
-
-                musicService.start();
 
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -259,7 +268,6 @@ public class PlayerActivity extends AppCompatActivity
                         handler.postDelayed(this, 1000);
                     }
                 });
-
                 musicService.OnCompleted();
                 musicService.showNotification(R.drawable.baseline_play_arrow);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_play_arrow);
@@ -302,10 +310,8 @@ public class PlayerActivity extends AppCompatActivity
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
                 metaData(uri);
-
                 song_name.setText(listSongs.get(position).getTitle());
                 artist_name.setText(listSongs.get(position).getArtist());
-                cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
 
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -319,10 +325,8 @@ public class PlayerActivity extends AppCompatActivity
                     }
                 });
                 musicService.OnCompleted();
-
                 musicService.showNotification(R.drawable.baseline_pause);
                 play_pause_btn.setBackgroundResource(R.drawable.baseline_pause);
-
                 musicService.start();
 
             } else {
@@ -338,10 +342,8 @@ public class PlayerActivity extends AppCompatActivity
                 uri = Uri.parse(listSongs.get(position).getPath());
                 musicService.createMediaPlayer(position);
                 metaData(uri);
-
                 song_name.setText(listSongs.get(position).getTitle());
                 artist_name.setText(listSongs.get(position).getArtist());
-                cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
 
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
@@ -383,6 +385,7 @@ public class PlayerActivity extends AppCompatActivity
         try {
             if (musicService.isPlaying()) {
                 musicService.pause();
+                objectAnimator.pause();
 
                 play_pause_btn.setImageResource(R.drawable.baseline_play_arrow);
                 musicService.showNotification(R.drawable.baseline_play_arrow);
@@ -402,7 +405,7 @@ public class PlayerActivity extends AppCompatActivity
                 play_pause_btn.setImageResource(R.drawable.baseline_pause);
                 musicService.showNotification(R.drawable.baseline_pause);
                 musicService.start();
-
+                objectAnimator.resume();
                 seekBar.setMax(musicService.getDuration() / 1000);
                 PlayerActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -425,20 +428,23 @@ public class PlayerActivity extends AppCompatActivity
         return random.nextInt(i + 1);
     }
 
+    //Chuyển đơn vị giây -> phút:giây
     private String formattedTime(int mCurrentPosition) {
-        String minutes = String.valueOf(mCurrentPosition / 60);
+        String totalout = "";
+        String totalNew = "";
         String seconds = String.valueOf(mCurrentPosition % 60);
-
-        // Ensure minutes and seconds have leading zeros if necessary
-        if (minutes.length() == 1) {
-            minutes = "0" + minutes;
-        }
+        String minutes = String.valueOf(mCurrentPosition / 60);
+        totalout = minutes + ":" + seconds;
+        totalNew = minutes + ":" + "0" + seconds;
         if (seconds.length() == 1) {
-            seconds = "0" + seconds;
+            return totalNew;
+        } else {
+            return totalout;
         }
-        return minutes + ":" + seconds;
     }
 
+    //Trước 25 - 02 - 2024: Lấy info vị trí bài hát và khởi tạo các thành phần khác
+    //25 - 02 - 2024: Hàm này mới thêm "sender" để chạy được nhạc trong Albums
     private void getIntentMethod() {
         position = getIntent().getIntExtra("position", -1);
         String sender = getIntent().getStringExtra("sender");
@@ -451,70 +457,120 @@ public class PlayerActivity extends AppCompatActivity
         if (listSongs != null) {
             play_pause_btn.setImageResource(R.drawable.baseline_pause);
             uri = Uri.parse(listSongs.get(position).getPath());
-
-            song_name.setText(listSongs.get(position).getTitle());
-            artist_name.setText(listSongs.get(position).getArtist());
-            cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
-
-            seekBar.setMax((int) (listSongs.get(position).getDuration() / 1000));
-
-
-            getSongDetailsFromFirestore(position);
         }
         Intent i = new Intent(this, MusicService.class);
         i.putExtra("servicePosition", position);
         startService(i);
     }
 
-    private void getSongDetailsFromFirestore(int position) {
-        String path = listSongs.get(position).getPath().replace("//", "/");
-        DocumentReference docRef = FirebaseFirestore.getInstance()
-                .collection("music")
-                .document(path);
-
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        String title = document.getString("title");
-                        String artist = document.getString("artist");
-                        long duration = document.getLong("duration"); // Thời lượng bài hát
-                        String image = document.getString("image");
-
-                        // Cập nhật thông tin bài hát
-                        song_name.setText(title);
-                        artist_name.setText(artist);
-                        cover_art.setImageURI(Uri.parse(image));
-
-
-                        // Cập nhật thời lượng bài hát cho SeekBar
-                        seekBar.setMax((int) (duration / 1000));
-
-                        // Cập nhật các thông tin khác cho MusicService (nếu cần)
-                    } else {
-                        Log.d("Firestore", "No such document");
-                    }
-                } else {
-                    Log.w("Firestore", "Error getting documents.", task.getException());
-                }
-            }
-        });
-    }
-
-    private void metaData(Uri uri) throws IOException {
+    //Giải thích MetadataRetriever: Truy xuất info từ các tệp multimedia: music, video,... Truy xuất nội dung của tệp: Title, Artist, Album,...
+    private void metaData(Uri uri) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         retriever.setDataSource(uri.toString());
+        int durationTotal = Integer.parseInt(listSongs.get(position).getDuration()) / 1000;
+        duration_finished.setText(formattedTime(durationTotal));
+        byte[] art = retriever.getEmbeddedPicture();
+        Bitmap bitmap;
+        if (art != null) {
+            bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
+            imageAnimation(this, cover_art, bitmap);
+            Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(@Nullable Palette palette) {
+                    Palette.Swatch swatch = palette != null ? palette.getDominantSwatch() : null;
+                    if (swatch != null) {
+                        ImageView gredient = findViewById(R.id.imageViewGredient);
+                        RelativeLayout mContainer = findViewById(R.id.container);
+                        gredient.setBackgroundResource(R.drawable.gredient_bg);
+                        mContainer.setBackgroundResource(R.drawable.main_bg);
 
-        int durationInMilis = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+                        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{swatch.getRgb(), 0x00000000});
+                        gredient.setBackground(gradientDrawable);
 
-        int durationInSeconds = durationInMilis / 1000;
-        String durationFormatted = formattedTime(durationInSeconds);
-        duration_finished.setText(durationFormatted);
+                        GradientDrawable gradientDrawableBG = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{swatch.getRgb(), swatch.getRgb()});
+                        mContainer.setBackground(gradientDrawableBG);
 
-        Glide.with(this).load(music_Files.get(position).getImage()).into(cover_art);
+                        song_name.setTextColor(swatch.getTitleTextColor());
+                        artist_name.setTextColor(swatch.getBodyTextColor());
+                    } else {
+                        ImageView gredient = findViewById(R.id.imageViewGredient);
+                        RelativeLayout mContainer = findViewById(R.id.container);
+                        gredient.setBackgroundResource(R.drawable.gredient_bg);
+                        mContainer.setBackgroundResource(R.drawable.main_bg);
+
+                        GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{0xff000000, 0x00000000});
+                        gredient.setBackground(gradientDrawable);
+
+                        GradientDrawable gradientDrawableBG = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{0xff000000, 0xff000000});
+                        mContainer.setBackground(gradientDrawableBG);
+
+                        song_name.setTextColor(Color.WHITE);
+                        artist_name.setTextColor(Color.DKGRAY);
+                    }
+                }
+            });
+        } else {
+            Glide.with(this)
+                    .asBitmap()
+                    .load(R.drawable.question_mark)
+                    .into(cover_art);
+
+            ImageView gredient = findViewById(R.id.imageViewGredient);
+            RelativeLayout mContainer = findViewById(R.id.container);
+            gredient.setBackgroundResource(R.drawable.gredient_bg);
+            mContainer.setBackgroundResource(R.drawable.main_bg);
+
+            song_name.setTextColor(Color.WHITE);
+            artist_name.setTextColor(Color.DKGRAY);
+        }
     }
+
+    //26 - 02 - 2024
+    //Effect khi chuyển nhạc khác
+    public void imageAnimation(final Context context, final ImageView imageView, final Bitmap bitmap) {
+        Animation animationOut = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
+        Animation animationIn = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
+
+        animationOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                Glide.with(context).load(bitmap).into(imageView);
+                animationIn.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                imageView.startAnimation(animationIn);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        imageView.startAnimation(animationOut);
+    }
+
 
     //Hàm thông báo khi kết nối service thành công / ngắt kết nối
     @Override
@@ -523,11 +579,12 @@ public class PlayerActivity extends AppCompatActivity
             MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
             musicService = myBinder.getService();
             musicService.setCallBack(this);
+//        Toast.makeText(this, "Kết nối thành công" + musicService,
+//                Toast.LENGTH_SHORT).show();
             seekBar.setMax(musicService.getDuration() / 1000);
             metaData(uri);
             song_name.setText(listSongs.get(position).getTitle());
             artist_name.setText(listSongs.get(position).getArtist());
-            cover_art.setImageURI(Uri.parse(listSongs.get(position).getImage()));
             musicService.OnCompleted();
             musicService.showNotification(R.drawable.baseline_pause);
         } catch (IOException e) {
@@ -546,8 +603,6 @@ public class PlayerActivity extends AppCompatActivity
             int newPosition = musicService.getCurrentPosition();
             song_name.setText(listSongs.get(newPosition).getTitle());
             artist_name.setText(listSongs.get(newPosition).getArtist());
-            cover_art.setImageURI(Uri.parse(listSongs.get(newPosition).getImage()));
-            seekBar.setProgress(newPosition / 1000);
         }
     }
 }

@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/favorite_song_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your favourite songs:"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"
+        android:padding="8dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_favourite"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/favorite_song_title"
+        />
+
+</RelativeLayout>

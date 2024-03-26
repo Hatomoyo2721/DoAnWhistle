@@ -2,14 +2,14 @@ package com.example.myapplication;
 
 import static com.example.myapplication.MainActivity.musicFiles;
 
+import android.media.MediaMetadataRetriever;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.media.Image;
-import android.media.MediaMetadataRetriever;
-import android.os.Bundle;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
@@ -63,11 +63,27 @@ public class AlbumDetails extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!(albumSongs.size() < 1)) {
+        ArrayList<MusicFiles> tempAlbumSongs = new ArrayList<>();
+
+        for (MusicFiles musicFile : musicFiles) {
+            if (albumName.equals(musicFile.getAlbum())) {
+                tempAlbumSongs.add(musicFile);
+            }
+        }
+
+        if (tempAlbumSongs.size() >= 3) {
+            albumSongs.clear();
+            albumSongs.addAll(tempAlbumSongs);
             albumDetailsAdapter = new AlbumDetailsAdapter(this, albumSongs);
             recyclerView.setAdapter(albumDetailsAdapter);
             recyclerView.setLayoutManager(new LinearLayoutManager(this,
                     RecyclerView.VERTICAL, false));
+            recyclerView.setVisibility(View.VISIBLE);
+            albumPhoto.setVisibility(View.VISIBLE);
+        } else {
+            // Nếu không đủ 3 bài hát, ẩn album và bài hát
+            recyclerView.setVisibility(View.GONE);
+            albumPhoto.setVisibility(View.GONE);
         }
     }
 
