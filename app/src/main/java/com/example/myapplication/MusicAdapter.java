@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +22,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -122,23 +120,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.viewHolder> 
     private void deleteMusicFromFirebase(int position) {
         String titleSong = music_Files.get(position).getPath().replace("//", "/");
         DocumentReference documentReference = FirebaseFirestore.getInstance().document("music/" + titleSong);
-        StorageReference storageReference = storage.getReferenceFromUrl(music_Files.get(position).getPath());
         documentReference.delete()
                 .addOnSuccessListener(unused -> {
                     Log.d("MusicAdapter", "Firestore music doc deleted");
                 })
                 .addOnFailureListener(e -> Log.w("MusicAdapter", "Firestore music doc deletion failed", e));
-        storageReference.delete().addOnSuccessListener(unused -> {
-                    Log.d("MusicAdapter", "Music file deleted from storage");
-                    music_Files.remove(position);
-                    notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, music_Files.size());
-                    Toast.makeText(music_Context, "Xóa thành công", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("MusicAdapter", "Music file deletion failed", e);
-                    Toast.makeText(music_Context, "Xóa thất bại", Toast.LENGTH_SHORT).show();
-                });
     }
 
     void updateList(ArrayList<MusicFiles> musicFilesArrayList) {

@@ -35,6 +35,8 @@ public class SongsFragment extends Fragment {
         recyclerView = v.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
+
+
         return v;
     }
 
